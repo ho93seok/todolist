@@ -48,14 +48,14 @@
             </p>
         </div>
         <div>
-        <!--displayed flashed messages-->
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for msg in messages %}
-                    <p>{{ msg }}</p>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}  
+            <!--displayed flashed messages-->
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for msg in messages %}
+                        <p>{{ msg }}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}  
         </div>
     </form>
 </body>
