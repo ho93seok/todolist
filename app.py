@@ -6,14 +6,8 @@ University of Maryland Global Campus
 """
 
 # Import dependencies.
-import datetime
-import json
 import os
-import re
-import logging
-from functools import wraps
-from flask import Flask, Markup, session, render_template, flash, request, redirect, url_for
-from passlib.hash import sha256_crypt
+from flask import Flask, render_template
 
 # Define globals
 app = Flask(__name__)
@@ -27,13 +21,6 @@ def index():
 
     # Initialize variables.
     site_title = 'Home - Group 4 To-Do List Application'
-    loggedin = False
-    username = ''
-
-    # Check if the user is logged in.
-    if 'username' in session:
-        loggedin = True
-        username = session['username']
 
     # Render template.
     return render_template(
