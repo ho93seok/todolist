@@ -1,0 +1,18 @@
+<div class="col right">
+    <nav id="main-menu">
+        <ul>
+        {% for link in nav %}
+            <li><a href="{{ link.url }}">{{ link.name }}</a></li>
+        {% endfor %}
+
+        {% if loggedin%}
+            <li><a href="/admin">My Account</a></li>
+            <li><a href="/logout">Log Out</a></li>
+        {% else %}
+            <li><a href="/register">Register</a></li>
+            <li><a href="/login">Log In</a></li>
+        {% endif %}
+
+        </ul>
+    </nav>
+</div>
