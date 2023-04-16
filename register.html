@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <link rel="icon" href="data:,">
+    <style>
+      div {
+        margin-bottom: 5px;
+      }
+      label {
+        display: block;
+        float: left;
+        width: 150px;
+        text-align: right;
+        font-weight: bold;
+        margin-right: 10px;
+      }
+      input.submit {
+        margin-left: 160px;
+      }
+      p {
+        margin-left: 160px;
+      }
+    </style>
+</head>
+<body>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <h1>Sign up for a free account</h1>
+    <form action="/register" method="post">
+        <div>
+            <!--username field-->
+            <label for="username">Username</label>
+            <input type="text" name="username">
+        </div>
+        <div>
+            <!--password field-->
+            <label for="password">Password</label>
+            <input type="password" name="password">
+        </div>
+        <div>
+            <!--submit button (sign up)-->
+            <input type="submit" class="submit" value="Sign Up">
+        </div>
+        <div>
+            <!--direct users to log in if they have an account-->
+            <p>Already a member?
+                <a href="{{ url_for('login') }}">Log in here.</a>
+            </p>
+        </div>
+        <div>
+        <!--displayed flashed messages-->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for msg in messages %}
+                    <p>{{ msg }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}  
+        </div>
+    </form>
+</body>
+</html>
