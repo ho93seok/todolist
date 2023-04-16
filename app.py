@@ -156,7 +156,7 @@ def confirm_deletion(): ####IN PROGRES####
     error = None
     
 
-def delete_account(username, password): ####IN PROGRES####
+def delete_profile_stage2(username, password): ####IN PROGRES####
     """"""
     # loop through username and password columns in data list
     data = csv_data()
@@ -202,7 +202,7 @@ def delete_profile():
         elif not password:
             error = 'Please enter your password.'
         elif username and password:
-            confirm_deletion(username, password)
+            delete_profile_stage2(username, password)
             if error is None:
                 return redirect('login')
         if error is not None:
