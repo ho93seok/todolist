@@ -4,8 +4,8 @@
         <!-- start content -->
         <div class="page-content">
             <div class="content">
-                <h2>Delete your account</h2>
-                <form action="/delete_profile" method="post">
+                <h2>Delete your profile</h2>
+                <form action="/delete-profile" method="post">
                     <div>
                         <!--username field-->
                         <label for="username">Username</label>
@@ -18,40 +18,10 @@
                     </div>
                     <div>
                         <!--submit button-->
-                        <input type="submit" class="popup" value="Submit">
-                        <div id="myPopup" class="popup">
-                            <div class="popup-content">
-                                <p>Are you sure you want to delete your account?</p>
-                                <button id="closePopup">
-                                    Cancel
-                                </button>
-                            </div>
-                        </div>
+                        <input type="submit" class="submit" value="Submit">
                         <!--cancel button-->
                         <input type="button" class="button" onclick="window.location.replace('/')" value="Cancel">
                     </div>
-                    <button id="myButton">Delete Account</button>
-                    <div id="myPopup" class="popup">
-                        <div class="popup-content">
-                            <p>Are you sure you want to delete your account?</p>
-                            <button id="closePopup">
-                                  Cancel
-                              </button>
-                        </div>
-                    </div>
-                    <script>
-                        myButton.addEventListener("click", function () {
-                            myPopup.classList.add("show");
-                        });
-                        closePopup.addEventListener("click", function () {
-                            myPopup.classList.remove("show");
-                        });
-                        window.addEventListener("click", function (event) {
-                            if (event.target == myPopup) {
-                                myPopup.classList.remove("show");
-                            }
-                        });
-                    </script>
                 </form>
         </div><!-- end content -->
 {% endblock %}
