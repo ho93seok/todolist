@@ -119,7 +119,7 @@ def password_update():
         return render_template('password_update.html')
     return render_template('password_update.html')
 
-def forgot_password(): ####IN PROGRES####
+def forgot_password(): ####IN PROGRESS####
     """function returns page for user to change forgotten password (not logged in)"""
     error = None
     # if website request POST, get username/password input
@@ -142,12 +142,12 @@ def forgot_password(): ####IN PROGRES####
         return render_template('forgot_password.html')
     return render_template('forgot_password.html')
 
-def confirm_deletion(): ####IN PROGRES####
+def confirm_deletion(): ####IN PROGRESS####
     """"""
     error = None
     
 
-def delete_profile_stage2(username, password): ####IN PROGRES####
+def delete_profile_stage2(username, password): ####IN PROGRESS####
     """"""
     # loop through username and password columns in data list
     data = csv_data()
