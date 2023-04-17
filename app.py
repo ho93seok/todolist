@@ -31,9 +31,10 @@ def index():
         'home.html',
         site_title = site_title,
         site_description = "A to-do list application by Group 4.",
-        page_title = 'To-do '
+        page_title = 'To-do List'
     )
 
+# Test Register
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -83,22 +84,75 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
 
+# helper function to read tasks from CSV
+def read_tasks():
+    tasks = []
+    with open('tasks.csv', 'r') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            tasks.append(row)
+    return tasks
+
+# helper function to write tasks to CSV
+def write_tasks(tasks):
+    with open('tasks.csv', 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerows(tasks)
+
 @app.route('/create-task', methods=['GET', 'POST'])
 def create_task():
-    task = request.form['task']
-    description = request.form['description']
-    date = request.form['date']
-    time = request.form['time']
-    category = request.form['category']
-    with open('tasks.csv', 'a', newline='') as csvfile:
-        fieldnames = ['title', 'description', 'date', 'time', 'category']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writerow({'title': task, 'description': description, 'date': date, 'time': time, 'category': category})
+    if request.method == 'POST':
+        task = request.form['task']
+        description = request.form['description']
+        due_date = request.form['due_date']
+
+        tasks = read_tasks()
+        tasks.append([task, description, due_date])
+        write_tasks(tasks)
+
+        return redirect(url_for('home'))
+
+    return render_template('create_task.html')
+
+@app.route('/edit-task/<int:id>', methods=['GET', 'POST'])
+def edit_task(id):
+    tasks = read_tasks()
+    task = tasks[id]
+
+    if request.method == 'POST':
+        task = request.form['task']
+        description = request.form['description']
+        due_date = request.form['due_date']
+
+        task[0] = task
+        task[1] = description
+        task[2] = due_date
+
+        write_tasks(tasks)
+
+        return redirect(url_for('home'))
+
+    return render_template('edit_task.html', task_id=id, task=task)
+
+@app.route('/delete-task/<int:id>')
+def delete_task(id):
+    tasks = read_tasks()
+    tasks.pop(id)
+    write_tasks(tasks)
+
     return redirect(url_for('home'))
 
+@app.route('/create-list', methods=['GET', 'POST'])
+def create_list():
+    return render_template('create_task.html')
 
+@app.route('/edit-list', methods=['GET', 'POST'])
+def edit_list():
+    return render_template('edit_list.html')
 
-
+@app.route('/delete-list/<int:id>')
+def delete_list():
+    return render_template('delete_list.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
