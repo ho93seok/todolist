@@ -58,3 +58,9 @@ docs/_build/
 .env.test.local
 .env.production.local
 .vscode
+
+#Flask
+Lib/
+Scripts/
+venv/
+pyvenv.cfg
