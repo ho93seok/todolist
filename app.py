@@ -7,7 +7,7 @@ University of Maryland Global Campus
 
 # Import dependencies.
 import os, csv
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Define globals
@@ -31,7 +31,7 @@ def index():
         'home.html',
         site_title = site_title,
         site_description = "A to-do list application by Group 4.",
-        page_title = 'Welcome'
+        page_title = 'To-do '
     )
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -46,7 +46,6 @@ def register():
                 if row['username'] == username:
                     error = 'Username already exists!'
                     return render_template('register.html', error=error)
-
         password_hash = generate_password_hash(password)
         with open('users.csv', 'a', newline='') as f:
             writer = csv.writer(f)
@@ -74,6 +73,7 @@ def login():
                         error = 'Incorrect password!'
                         return render_template('login.html', error=error)
             error = 'Username not found!'
+            flash(error)
             return render_template('login.html', error=error)
     else:
         return render_template('login.html')
@@ -95,6 +95,9 @@ def create_task():
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writerow({'title': task, 'description': description, 'date': date, 'time': time, 'category': category})
     return redirect(url_for('home'))
+
+
+
 
 
 if __name__ == '__main__':
