@@ -34,6 +34,29 @@ def index():
         page_title = 'Welcome'
     )
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        with open('users.csv', 'r') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                if row['username'] == username:
+                    error = 'Username already exists!'
+                    return render_template('register.html', error=error)
+
+        password_hash = generate_password_hash(password)
+        with open('users.csv', 'a', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow([username, password_hash])
+
+        session['username'] = username
+        return redirect(url_for('home'))
+    else:
+        return render_template('register.html')
+    
 @app.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == 'POST':
@@ -48,8 +71,15 @@ def login():
                         session['username'] = username
                         return redirect(url_for('home'))
                     else:
-                        return 'Incorrect password!'
-    return 'Username not found!'
+                        error = 'Incorrect password!'
+                        return render_template('login.html', error=error)
+    error = 'Username not found!'
+    return render_template('login.html', error=error)
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True)
