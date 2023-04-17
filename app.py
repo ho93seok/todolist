@@ -30,7 +30,7 @@ def index():
         page_title = 'Welcome'
     )
 
-@app.route('/register')
+@app.route('/register', methods=["GET", "POST"])
 def register():
 
     '''Registration Page'''
@@ -40,7 +40,7 @@ def register():
         page_title = 'Register'
     )
 
-@app.route('/security-questions')
+@app.route('/security-questions', methods=["GET", "POST"])
 def security_questions():
 
     '''Registration Security Questions'''
@@ -50,7 +50,7 @@ def security_questions():
         page_title = 'Register'
     )
 
-@app.route('/password-update')
+@app.route('/password-update', methods=["GET", "POST"])
 def password_update():
 
     '''Password Update (loggin in)'''
@@ -60,7 +60,7 @@ def password_update():
         page_title = 'Password Update'
     )
 
-@app.route('/forgot-password')
+@app.route('/forgot-password', methods=["GET", "POST"])
 def forgot_password():
 
     '''Forgot Password (logged out)'''
@@ -77,6 +77,16 @@ def delete_profile():
 
     return render_template(
         'delete-profile.html',
+        page_title = 'Delete Profile'
+    )
+
+@app.route('/confirm-delete', methods=["GET", "POST"])
+def confirm_delete():
+
+    '''Confirm Delete'''
+
+    return render_template(
+        'confirm-delete.html',
         page_title = 'Delete Profile'
     )
 
