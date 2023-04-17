@@ -73,13 +73,29 @@ def login():
                     else:
                         error = 'Incorrect password!'
                         return render_template('login.html', error=error)
-    error = 'Username not found!'
-    return render_template('login.html', error=error)
+            error = 'Username not found!'
+            return render_template('login.html', error=error)
+    else:
+        return render_template('login.html')
 
 @app.route('/logout')
 def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
+
+@app.route('/create-task', methods=['GET', 'POST'])
+def create_task():
+    task = request.form['task']
+    description = request.form['description']
+    date = request.form['date']
+    time = request.form['time']
+    category = request.form['category']
+    with open('tasks.csv', 'a', newline='') as csvfile:
+        fieldnames = ['title', 'description', 'date', 'time', 'category']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writerow({'title': task, 'description': description, 'date': date, 'time': time, 'category': category})
+    return redirect(url_for('home'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
