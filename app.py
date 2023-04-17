@@ -5,6 +5,7 @@ CMSC 495, Spring 2023
 University of Maryland Global Campus
 """
 
+<<<<<<< HEAD
 from flask import Flask, render_template, request, redirect, url_for
 import csv, os
 
@@ -28,3 +29,29 @@ def signin():
 
 if __name__ == '__main__':
     app.run(debug=True)
+=======
+# Import dependencies.
+import os
+from flask import Flask, render_template
+
+# Define globals
+app = Flask(__name__)
+app.secret_key = os.urandom(16)
+
+# Define routes.
+@app.route('/')
+def index():
+
+    '''Home Page'''
+
+    # Initialize variables.
+    site_title = 'Home - Group 4 To-Do List Application'
+
+    # Render template.
+    return render_template(
+        'home.html',
+        site_title = site_title,
+        site_description = "A to-do list application by Group 4.",
+        page_title = 'Welcome'
+    )
+>>>>>>> 40193186245dc71df08baa9599ff8fbc84db94dc
