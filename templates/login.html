@@ -18,16 +18,6 @@
       <p>Do not have an account?
         <a href="{{ url_for('register') }}">Register</a>
       </p>
-      <div>
-        <!--displayed flashed messages-->
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        {% for msg in messages %}
-        <p>{{ msg }}</p>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
-      </div>
     </form>
   </div><!-- end content -->
   {% endblock %}

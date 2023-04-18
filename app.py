@@ -34,7 +34,6 @@ def index():
         page_title = 'To-do List'
     )
 
-<<<<<<< HEAD
 # Test Register
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -43,18 +42,18 @@ def register():
         password = request.form['password']
 
         with open('users.csv', 'r') as f:
-            reader = csv.DictReader(f)
+            reader = csv.reader(f, delimiter=',')
             for row in reader:
-                if row['username'] == username:
+                if row[0] == username:
                     error = 'Username already exists!'
                     return render_template('register.html', error=error)
         password_hash = generate_password_hash(password)
         with open('users.csv', 'a', newline='') as f:
-            writer = csv.writer(f)
+            writer = csv.writer(f, delimiter=',')
             writer.writerow([username, password_hash])
 
         session['username'] = username
-        return redirect(url_for('home'))
+        return redirect(url_for('index'))
     else:
         return render_template('register.html')
     
@@ -65,12 +64,12 @@ def login():
         password = request.form['password']
 
         with open('users.csv', 'r') as f:
-            reader = csv.DictReader(f)
+            reader = csv.reader(f, delimiter=',')
             for row in reader:
-                if row['username'] == username:
-                    if check_password_hash(row['password'], password):
+                if row[0] == username:
+                    if check_password_hash(row[1], password):
                         session['username'] = username
-                        return redirect(url_for('home'))
+                        return redirect(url_for('index'))
                     else:
                         error = 'Incorrect password!'
                         return render_template('login.html', error=error)
@@ -111,7 +110,7 @@ def create_task():
         tasks.append([task, description, due_date])
         write_tasks(tasks)
 
-        return redirect(url_for('home'))
+        return redirect(url_for('index'))
 
     return render_template('create_task.html')
 
@@ -131,7 +130,7 @@ def edit_task(id):
 
         write_tasks(tasks)
 
-        return redirect(url_for('home'))
+        return redirect(url_for('index'))
 
     return render_template('edit_task.html', task_id=id, task=task)
 
@@ -141,7 +140,7 @@ def delete_task(id):
     tasks.pop(id)
     write_tasks(tasks)
 
-    return redirect(url_for('home'))
+    return redirect(url_for('index'))
 
 @app.route('/create-list', methods=['GET', 'POST'])
 def create_list():
@@ -154,19 +153,6 @@ def edit_list():
 @app.route('/delete-list/<int:id>')
 def delete_list():
     return render_template('delete_list.html')
-
-if __name__ == '__main__':
-    app.run(debug=True)
-=======
-@app.route('/register', methods=["GET", "POST"])
-def register():
-
-    '''Registration Page'''
-
-    return render_template(
-        'register.html',
-        page_title = 'Register'
-    )
 
 @app.route('/security-questions', methods=["GET", "POST"])
 def security_questions():
@@ -218,6 +204,5 @@ def confirm_delete():
         page_title = 'Delete Profile'
     )
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)
->>>>>>> 1c6284c899043d7edda06501f2bf17dabbf74830

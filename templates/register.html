@@ -1,12 +1,11 @@
+{% extends 'site-layout.html' %}
 
 {% block content %}
 <!-- start content -->
 <div class="page-content">
     <div class="content">
         <h2>Register</h2>
-        {% if error %}
-		    <p>{{ error }}</p>
-	    {% endif %}
+
         <form action="/register" method="POST">
         <!--username-->
         <label for="username">Username:</label>
@@ -20,16 +19,6 @@
         <p>Already a member?
           <a href="{{ url_for('login') }}">Log in here</a>
         </p>
-        <div>
-            <!--displayed flashed messages-->
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    {% for msg in messages %}
-                        <p>{{ msg }}</p>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}  
-        </div>
         </form>
     </div>
 </div><!-- end content -->
