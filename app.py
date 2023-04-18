@@ -78,6 +78,10 @@ def login():
             return render_template('login.html', error=error)
     else:
         return render_template('login.html')
+    
+@app.route('/admin')
+def admin():
+    return render_template('admin.html')
 
 @app.route('/logout')
 def logout():
