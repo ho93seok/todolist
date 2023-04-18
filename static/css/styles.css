@@ -165,3 +165,35 @@ form #submit-btn:hover{
     cursor: pointer;
     background: #7200ca;
 }
+<<<<<<< HEAD
+/************************
+Pop-Up
+************************/
+.popup {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: none;
+}
+.popup-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888888;
+    width: 30%;
+    font-weight: bolder;
+}
+.popup-content button {
+    display: block;
+    margin: 0 auto;
+}
+.show {
+    display: block;
+}
+=======
+>>>>>>> 1c6284c899043d7edda06501f2bf17dabbf74830

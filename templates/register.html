@@ -1,27 +1,25 @@
 {% extends 'site-layout.html' %}
 
 {% block content %}
-        <!-- start content -->
-        <div class="page-content">
-            <div class="content">
-                <h2>Sign Up for an Account</h2>
-                <form action="/register" method="post">
-                    <div>
-                        <!--username field-->
-                        <label for="username">Username</label>
-                        <input type="text" name="username">
-                    </div>
-                    <div>
-                        <!--password field-->
-                        <label for="password">Password</label>
-                        <input type="password" name="password">
-                    </div>
-                    <div>
-                        <!--submit button (sign up)-->
-                        <input type="submit" class="submit" value="Sign Up">
-                        <!--cancel button-->
-                        <input type="button" class="button" onclick="window.location.replace('/login')" value="Cancel">
-                    </div>
-                </form>
-        </div><!-- end content -->
+<!-- start content -->
+<div class="page-content">
+    <div class="content">
+        <h2>Register</h2>
+
+        <form action="/register" method="POST">
+        <!--username-->
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username"><br>
+        <!--password-->
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password"><br><br>
+        <!--submit-->
+        <input type="submit" class="submit" value="Sign Up">
+        <!--Register-->
+        <p>Already a member?
+          <a href="{{ url_for('login') }}">Log in here</a>
+        </p>
+        </form>
+    </div>
+</div><!-- end content -->
 {% endblock %}

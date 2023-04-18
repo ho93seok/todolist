@@ -5,7 +5,7 @@
             <li><a href="{{ link.url }}">{{ link.name }}</a></li>
         {% endfor %}
 
-        {% if loggedin%}
+        {% if session['username']%}
             <li><a href="/admin">My Account</a></li>
             <li><a href="/logout">Log Out</a></li>
         {% else %}
