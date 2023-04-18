@@ -34,6 +34,7 @@ def index():
         page_title = 'To-do List'
     )
 
+<<<<<<< HEAD
 # Test Register
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -156,3 +157,67 @@ def delete_list():
 
 if __name__ == '__main__':
     app.run(debug=True)
+=======
+@app.route('/register', methods=["GET", "POST"])
+def register():
+
+    '''Registration Page'''
+
+    return render_template(
+        'register.html',
+        page_title = 'Register'
+    )
+
+@app.route('/security-questions', methods=["GET", "POST"])
+def security_questions():
+
+    '''Registration Security Questions'''
+
+    return render_template(
+        'security-questions.html',
+        page_title = 'Register'
+    )
+
+@app.route('/password-update', methods=["GET", "POST"])
+def password_update():
+
+    '''Password Update (loggin in)'''
+
+    return render_template(
+        'password-update.html',
+        page_title = 'Password Update'
+    )
+
+@app.route('/forgot-password', methods=["GET", "POST"])
+def forgot_password():
+
+    '''Forgot Password (logged out)'''
+
+    return render_template(
+        'forgot-password.html',
+        page_title = 'Forgot Password'
+    )
+
+@app.route('/delete-profile', methods=["GET", "POST"])
+def delete_profile():
+
+    '''Delete Profile'''
+
+    return render_template(
+        'delete-profile.html',
+        page_title = 'Delete Profile'
+    )
+
+@app.route('/confirm-delete', methods=["GET", "POST"])
+def confirm_delete():
+
+    '''Confirm Delete'''
+
+    return render_template(
+        'confirm-delete.html',
+        page_title = 'Delete Profile'
+    )
+
+if __name__ == "__main__":
+    app.run(debug=True)
+>>>>>>> 1c6284c899043d7edda06501f2bf17dabbf74830
