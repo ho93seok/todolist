@@ -4,17 +4,9 @@
     <!-- start content -->
     <div class="page-content">
         <div class="content">
-            <h2>Welcome {{session['username']}}</h2>
-            <form method="POST" action="{{ url_for('create_list') }}"></form>
-            <h3>Projects List</h3>
-            <ol>
-                <li><a href="#">Work</a></li>
-                <li><a href="#">Education</a></li>
-                <li><a href="#">Personal</a></li>
-                {% for list in list %}
-                <li><a href="#">list.title</a></li>
-                
-                {% endfor %}
-            </ol>
+            <h2>Account</h2>
+        
+            <h3>Update Password</h3>
+            <button type="button" onclick="location.href='{{ url_for( 'password_update') }}';">Update Password</button>
     </div><!-- end content -->
 {% endblock %}
