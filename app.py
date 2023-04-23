@@ -217,24 +217,22 @@ def security_questions():
 @app.route('/update-password', methods=["GET", "POST"])
 def update_password():
 
-    '''Password Update (loggin in)'''
+    '''Update Password (logged in)'''
 
     error = None
     # if website request POST, get username/password input
     # test input for correct/existing input combination saved in database(csv)
     if request.method == "POST":
-        username = request.form["username"]
+        username = session['username']
         password = request.form["password"]
         new_password = request.form["new_password"]
         # prompt user to input username and password fields
-        if not username:
-            error = 'Please enter your username.'
-        elif not password:
+        if not password:
             error = 'Please enter your password.'
         elif not new_password:
             error = 'Please enter your new password.'
         elif username and password and new_password:
-            error = all_checks(username, password, new_password)
+            error = new_password_check(password, new_password)
             if error is None:
                 return redirect(url_for('index'))
         if error is not None:
@@ -243,10 +241,10 @@ def update_password():
         return render_template('update-password.html')
     return render_template('update-password.html')
 
-@app.route('/reset-password', methods=["GET", "POST"])
-def reset_password():
+@app.route('/forgot-password', methods=["GET", "POST"])
+def forgot_password():
 
-    '''Reset Password (logged out)'''
+    '''Forgot Password (logged out)'''
 
     error = None
     # if website request POST, get username/password input
@@ -284,17 +282,17 @@ def reset_password():
                             error = 'Security answers do not match.'
                         else:
                             temp.append(username)
-                            return redirect('change-password')
+                            return redirect('reset-password')
         if error is not None:
             # flash any error messages at bottom of page
             flash(error)
-        return render_template('reset-password.html')
-    return render_template('reset-password.html')
+        return render_template('forgot-password.html')
+    return render_template('forgot-password.html')
 
-@app.route('/change-password', methods=["GET", "POST"])
-def change_password():
+@app.route('/reset-password', methods=["GET", "POST"])
+def reset_password():
 
-    '''Change Password'''
+    '''Reset Password'''
 
     error = None
     if request.method == "POST":
@@ -329,8 +327,8 @@ def change_password():
                     flash('You have successfully changed your password!')
                     return redirect('login')
             flash(error)
-        return render_template('change-password.html')
-    return render_template('change-password.html')
+        return render_template('reset-password.html')
+    return render_template('reset-password.html')
 
 @app.route('/delete-account', methods=["GET", "POST"])
 def delete_account():
@@ -470,31 +468,9 @@ def password_check(password):
             # once user input valid, append username and hashed password to database(csv)
     return error
 
-def all_checks(username, password, new_password):
-    
-    '''Password Check for Password Update'''
-    
-    # loop through username and password columns in data list
-    data = csv_data()
-    user_data = [x[0] for x in data]
-    pswd_data = [x[1] for x in data]
-    # flash error if username not registered; return to update-password
-    if username not in user_data:
-        error = 'Incorrect username.'
-        # redirect user to homepage if username and password match
-    if username in user_data:
-        for i in range(len(user_data)):
-            # verify password input against password hash
-            if user_data[i] == username and check_password_hash(pswd_data[i], password) == False:
-                error = 'Wrong username or password.'
-            # check new password meets standard password requirements
-            elif user_data[i] == username and check_password_hash(pswd_data[i], password) == True:
-                error = new_password_check(password, new_password)
-    return error
-
 def new_password_check(password, new_password):
 
-    '''Password Check for Password Update'''
+    '''New Password Check'''
 
     error = None
     # check if new password input same as old password
