@@ -223,20 +223,26 @@ def update_password():
     # if website request POST, get username/password input
     # test input for correct/existing input combination saved in database(csv)
     if request.method == "POST":
-        username = session['username']
+        try:
+            username = session['username']
+        except:
+            flash('Your session has timed out.')
+            return redirect('login')
         password = request.form["password"]
         new_password = request.form["new_password"]
         # prompt user to input username and password fields
         if not password:
-            error = 'Please enter your password.'
+            error = 'Please enter existing your password.'
         elif not new_password:
             error = 'Please enter your new password.'
         elif username and password and new_password:
+            temp.append(username)
             error = new_password_check(password, new_password)
             if error is None:
+                temp.clear()
                 return redirect(url_for('index'))
         if error is not None:
-            # flash any error messages at bottom of page
+            # flash error message
             flash(error)
         return render_template('update-password.html')
     return render_template('update-password.html')
@@ -339,7 +345,11 @@ def delete_account():
     # if website request POST, get username/password input
     # test input for correct/existing input combination saved in database(csv)
     if request.method == "POST":
-        username = session['username']
+        try:
+            username = session['username']
+        except:
+            flash('Your session has timed out.')
+            return redirect('login')
         password = request.form["password"]
         # prompt user to input password field
         if not password:
@@ -370,7 +380,11 @@ def confirm_delete():
     # if website request POST, get username/password input
     # test input for correct/existing input combination saved in database(csv)
     if request.method == "POST":
-        username = session['username']
+        try:
+            username = session['username']
+        except:
+            flash('Your session has timed out.')
+            return redirect('login')
         password = request.form["password"]
         # prompt user to input password field
         if not password:
@@ -473,30 +487,31 @@ def new_password_check(password, new_password):
     '''New Password Check'''
 
     error = None
-    # check if new password input same as old password
-    if new_password == password:
-        error = 'Password cannot be the same as last password.'
-    if error is None:
-        # check password criteria
-        password_check(new_password)
-        if error is None:
-            # loop through username and password columns in data list
-            data = csv_data()
-            user_data = [x[0] for x in data]
-            pswd_data = [x[1] for x in data]
-            # verify old password entered correctly; save new password to password data list
-            for i in range(len(pswd_data)):
-                if check_password_hash(pswd_data[i], password):
-                    hash_pass = generate_password_hash(new_password)
-                    pswd_data[i] = hash_pass
-            # write usernames and passwords back into 'users' database(csv)
-            with open('users.csv', mode='w', newline='') as users:
-                writer = csv.writer(users)
-                for item in zip(user_data, pswd_data):
-                    writer.writerow(item)
-                # clear data
-                data.clear()
-                flash('You have successfully changed your password!')
+    username = temp[0]
+    # loop through username and password columns in data list
+    data = csv_data()
+    user_data = [x[0] for x in data]
+    pswd_data = [x[1] for x in data]
+    # verify old password entered correctly; save new password to password data list
+    for i in range(len(pswd_data)):
+        # check if new password input same as old password
+        if user_data[i] == username and check_password_hash(pswd_data[i], new_password) == True:
+            error = 'Password cannot be the same as last password.'
+        elif user_data[i] == username and check_password_hash(pswd_data[i], password) == False:
+            error = 'Incorrect password.'
+        elif user_data[i] == username and check_password_hash(pswd_data[i], password) == True:
+            password_check(new_password)
+            if error is None:
+                hash_pass = generate_password_hash(new_password)
+                pswd_data[i] = hash_pass
+                # write usernames and passwords back into 'users' database(csv)
+                with open('users.csv', mode='w', newline='') as users:
+                    writer = csv.writer(users)
+                    for item in zip(user_data, pswd_data):
+                        writer.writerow(item)
+                    # clear data
+                    data.clear()
+                    flash('You have successfully changed your password!')
     return error
 
 if __name__ == '__main__':
