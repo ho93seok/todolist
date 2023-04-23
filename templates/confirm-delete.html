@@ -1,16 +1,20 @@
 {% extends 'site-layout.html' %}
 
+{% if loggedin%} 
+<style>
+    .page-header .col{
+        width: 50%;
+    }
+</style>
+{% endif %}
+
 {% block content %}
         <!-- start content -->
         <div class="page-content">
             <div class="content">
-                <h2>Confirm deletion</h2>
+                <h2>Delete your Account</h2>
+                <h4>Are you sure you want to permanently delete your account?</h4>
                 <form action="/confirm-delete" method="post">
-                    <div>
-                        <!--username field-->
-                        <label for="username">Username</label>
-                        <input type="text" name="username">
-                    </div>
                     <div>
                         <!--password field-->
                         <label for="password">Password</label>

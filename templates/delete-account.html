@@ -1,22 +1,21 @@
-
 {% extends 'site-layout.html' %}
 
 {% block content %}
         <!-- start content -->
         <div class="page-content">
             <div class="content">
-                <h2>Change your password</h2>
-                <form action="/forgot_password" method="post">
-                    <!--username field-->
+                <h2>Delete your Account</h2>
+                <form action="/delete-account" method="post">
                     <div>
-                        <label for="username">Username</label>
-                        <input type="text" name="username">
+                        <!--password field-->
+                        <label for="password">Password</label>
+                        <input type="password" name="password">
                     </div>
                     <div>
                         <!--submit button-->
                         <input type="submit" class="submit" value="Submit">
                         <!--cancel button-->
-                        <input type="button" class="button" onclick="window.location.replace('/login')" value="Cancel">
+                        <input type="button" class="button" onclick="window.location.replace('/')" value="Cancel">
                     </div>
                 </form>
         </div><!-- end content -->
