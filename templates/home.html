@@ -4,7 +4,7 @@
     <!-- start content -->
     <div class="page-content">
         <div class="content">
-            <h2>Welcome {{session['username']}}</h2>
+            <h2>Welcome {{session['username']}}!</h2>
             <form method="POST" action="{{ url_for('create_list') }}"></form>
             <h3>Projects List</h3>
             <ol>
@@ -16,5 +16,6 @@
                 
                 {% endfor %}
             </ol>
-    </div><!-- end content -->
+    </div>
+    <!-- end content -->
 {% endblock %}
