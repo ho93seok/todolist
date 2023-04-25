@@ -112,32 +112,32 @@ def login():
     else:
         return render_template('login.html')
     
-@app.route('/admin/password-update')    
-def password_update():
-    """function returns page for user to update password (while logged in)"""
-    error = None
-    # if website request POST, get username/password input
-    # test input for correct/existing input combination saved in database(csv)
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-        new_password = request.form["new_password"]
-        # prompt user to input username and password fields
-        if not username:
-            error = 'Please enter your username.'
-        elif not password:
-            error = 'Please enter your password.'
-        elif not new_password:
-            error = 'Please enter your new password.'
-        elif username and password and new_password:
-            #error = all_checks(username, password, new_password)
-            if error is None:
-                return redirect('home')
-        if error is not None:
-            # flash any error messages
-            flash(error)
-        return render_template('password-update.html')
-    return render_template('password-update.html')
+# @app.route('/admin/password-update')    
+# def password_update():
+#     """function returns page for user to update password (while logged in)"""
+#     error = None
+#     # if website request POST, get username/password input
+#     # test input for correct/existing input combination saved in database(csv)
+#     if request.method == "POST":
+#         username = request.form["username"]
+#         password = request.form["password"]
+#         new_password = request.form["new_password"]
+#         # prompt user to input username and password fields
+#         if not username:
+#             error = 'Please enter your username.'
+#         elif not password:
+#             error = 'Please enter your password.'
+#         elif not new_password:
+#             error = 'Please enter your new password.'
+#         elif username and password and new_password:
+#             #error = all_checks(username, password, new_password)
+#             if error is None:
+#                 return redirect('home')
+#         if error is not None:
+#             # flash any error messages
+#             flash(error)
+#         return render_template('password-update.html')
+#     return render_template('password-update.html')
 
 @app.route('/admin')
 def admin():
