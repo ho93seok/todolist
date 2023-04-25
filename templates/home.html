@@ -4,7 +4,24 @@
     <!-- start content -->
     <div class="page-content">
         <div class="content">
-            <h2>Welcome {{session['username']}}!</h2>
+
+            {% if session['username']%}
+                <h2>Welcome {{session['username']}}!</h2>
+            {% endif %}
+
+            <form action="{{ url_for('create_task') }}" id="home-add-task">
+                <input type="submit" value="Add a task" />
+            </form>
+
+            {% if tasks %}
+            <h3>Task List</h3>
+            <ul>
+                {% for item in tasks %}
+                    <li><a href="#">{{ item[0] }}</a></li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
             <form method="POST" action="{{ url_for('create_list') }}"></form>
             <h3>Projects List</h3>
             <ol>
