@@ -7,11 +7,15 @@ University of Maryland Global Campus
 
 # Import dependencies.
 import os
-from flask import Flask, render_template
+from flask import Flask, render_template, request, jsonify
+from pusher import Pusher
+import json
 
 # Define globals
+pusher = Pusher()
 app = Flask(__name__)
 app.secret_key = os.urandom(16)
+
 
 # Define routes.
 @app.route('/')
