@@ -400,34 +400,38 @@ def confirm_delete():
                 # verify password input against password hash
                 if user_data[i] == username and check_password_hash(pswd_data[i], password) == False:
                     error = 'Wrong password.'
-                # check new password meets standard password requirements
+                # append all data that is not user data to lists
                 elif user_data[i] == username and check_password_hash(pswd_data[i], password) == True:
-                    kept_data = []
+                    kept_users = []
                     for row in data:
                         if str(row[0]) != username:
-                            kept_data.append(row)
+                            kept_users.append(row)
                     kept_security = []
                     for row in security:
                         if str(row[0]) != username:
                             kept_security.append(row)
                     # write usernames and passwords back into 'users' database(csv)
-                    with open('users.csv', mode='w', newline='') as f:
-                        writer = csv.writer(f)
-                        if kept_data:
-                            for item in kept_data:
+                    with open('users.csv', mode='w', newline='') as user_csv:
+                        writer = csv.writer(user_csv)
+                        if kept_users:
+                            for item in kept_users:
                                 writer.writerow(item)
                             # clear data
                             data.clear()
-                    with open('security.csv', mode='w', newline='') as f:
-                        writer = csv.writer(f)
+                    # write security questions back into 'security' database(csv)
+                    with open('security.csv', mode='w', newline='') as security_csv:
+                        writer = csv.writer(security_csv)
                         if kept_security:
                             for item in kept_security:
                                 writer.writerow(item)
-                            # clear data
+                            # clear security
                             security.clear()
+                        # end user session
                         session.pop('username', None)
                         flash('You have successfully deleted your account!')
+                        # redirect to login
                         return redirect('login')
+        
         flash(error)
         return render_template('confirm-delete.html')
     return render_template('confirm-delete.html')
@@ -479,7 +483,6 @@ def password_check(password):
             error = 'Password must contain an uppercase letter.'
         elif not any(sc in special_char for sc in password):
             error = 'Password must contain a special character.'
-            # once user input valid, append username and hashed password to database(csv)
     return error
 
 def new_password_check(password, new_password):
@@ -492,15 +495,17 @@ def new_password_check(password, new_password):
     data = csv_data()
     user_data = [x[0] for x in data]
     pswd_data = [x[1] for x in data]
-    # verify old password entered correctly; save new password to password data list
+    # verify old password entered correctly
     for i in range(len(pswd_data)):
         # check if new password input same as old password
         if user_data[i] == username and check_password_hash(pswd_data[i], new_password) == True:
             error = 'Password cannot be the same as last password.'
         elif user_data[i] == username and check_password_hash(pswd_data[i], password) == False:
             error = 'Incorrect password.'
+        # check new password criteria
         elif user_data[i] == username and check_password_hash(pswd_data[i], password) == True:
             password_check(new_password)
+            # generate new password hash
             if error is None:
                 hash_pass = generate_password_hash(new_password)
                 pswd_data[i] = hash_pass
