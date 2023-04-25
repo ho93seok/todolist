@@ -227,8 +227,8 @@ def security_questions():
         elif not sq3:
             error = 'Please enter an answer for Security Question 3'
         elif sq1 and sq2 and sq3:
-            with open('security.csv', mode='a', newline='') as users:
-                writer = csv.writer(users)
+            with open('security.csv', mode='a', newline='') as f:
+                writer = csv.writer(f)
                 hash_sq1 = generate_password_hash(sq1)
                 hash_sq2 = generate_password_hash(sq2)
                 hash_sq3 = generate_password_hash(sq3)
@@ -324,7 +324,7 @@ def forgot_password():
                             temp.append(username)
                             return redirect('reset-password')
         if error is not None:
-            # flash any error messages at bottom of page
+            # flash any error messages
             flash(error)
         return render_template('forgot-password.html')
     return render_template('forgot-password.html')
@@ -358,14 +358,15 @@ def reset_password():
                         hash_pass = generate_password_hash(password1)
                         pswd_data[i] = hash_pass
                 # write usernames and passwords back into 'users' database(csv)
-                with open('users.csv', mode='w', newline='') as users:
-                    writer = csv.writer(users)
+                with open('users.csv', mode='w', newline='') as f:
+                    writer = csv.writer(f)
                     for item in zip(user_data, pswd_data):
                         writer.writerow(item)
                     # clear data
                     data.clear()
                     flash('You have successfully changed your password!')
                     return redirect('login')
+            # flash any error messages
             flash(error)
         return render_template('reset-password.html')
     return render_template('reset-password.html')
@@ -401,6 +402,7 @@ def delete_account():
                 # check new password meets standard password requirements
                 elif user_data[i] == username and check_password_hash(pswd_data[i], password) == True:
                     return redirect('confirm-delete')
+        # flash any error messages
         flash(error)
         return render_template('delete-account.html')
     return render_template('delete-account.html')
@@ -445,16 +447,16 @@ def confirm_delete():
                         if str(row[0]) != username:
                             kept_security.append(row)
                     # write usernames and passwords back into 'users' database(csv)
-                    with open('users.csv', mode='w', newline='') as user_csv:
-                        writer = csv.writer(user_csv)
+                    with open('users.csv', mode='w', newline='') as f:
+                        writer = csv.writer(f)
                         if kept_users:
                             for item in kept_users:
                                 writer.writerow(item)
                             # clear data
                             data.clear()
                     # write security questions back into 'security' database(csv)
-                    with open('security.csv', mode='w', newline='') as security_csv:
-                        writer = csv.writer(security_csv)
+                    with open('security.csv', mode='w', newline='') as f:
+                        writer = csv.writer(f)
                         if kept_security:
                             for item in kept_security:
                                 writer.writerow(item)
@@ -465,7 +467,7 @@ def confirm_delete():
                         flash('You have successfully deleted your account!')
                         # redirect to login
                         return redirect('login')
-        
+        # flash any error messages
         flash(error)
         return render_template('confirm-delete.html')
     return render_template('confirm-delete.html')
@@ -544,8 +546,8 @@ def new_password_check(password, new_password):
                 hash_pass = generate_password_hash(new_password)
                 pswd_data[i] = hash_pass
                 # write usernames and passwords back into 'users' database(csv)
-                with open('users.csv', mode='w', newline='') as users:
-                    writer = csv.writer(users)
+                with open('users.csv', mode='w', newline='') as f:
+                    writer = csv.writer(f)
                     for item in zip(user_data, pswd_data):
                         writer.writerow(item)
                     # clear data
