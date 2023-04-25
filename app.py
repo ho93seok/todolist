@@ -111,39 +111,33 @@ def login():
             return render_template('login.html', error=error)
     else:
         return render_template('login.html')
-
-@app.route('/admin/update-password', methods=["GET", "POST"])
-def update_password():
-
-    '''Update Password (logged in)'''
-
+    
+@app.route('/admin/password-update')    
+def password_update():
+    """function returns page for user to update password (while logged in)"""
     error = None
     # if website request POST, get username/password input
     # test input for correct/existing input combination saved in database(csv)
     if request.method == "POST":
-        try:
-            username = session['username']
-        except:
-            flash('Your session has timed out.')
-            return redirect('login')
+        username = request.form["username"]
         password = request.form["password"]
         new_password = request.form["new_password"]
         # prompt user to input username and password fields
-        if not password:
-            error = 'Please enter existing your password.'
+        if not username:
+            error = 'Please enter your username.'
+        elif not password:
+            error = 'Please enter your password.'
         elif not new_password:
             error = 'Please enter your new password.'
         elif username and password and new_password:
-            temp.append(username)
-            error = new_password_check(password, new_password)
+            #error = all_checks(username, password, new_password)
             if error is None:
-                temp.clear()
-                return redirect(url_for('index'))
+                return redirect('home')
         if error is not None:
             # flash any error messages
             flash(error)
-        return render_template('update-password.html')
-    return render_template('update-password.html')
+        return render_template('password-update.html')
+    return render_template('password-update.html')
 
 @app.route('/admin')
 def admin():
