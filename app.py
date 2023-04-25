@@ -111,33 +111,39 @@ def login():
             return render_template('login.html', error=error)
     else:
         return render_template('login.html')
-    
-@app.route('/admin/password-update')    
-def password_update():
-    """function returns page for user to update password (while logged in)"""
+
+@app.route('/admin/update-password', methods=["GET", "POST"])
+def update_password():
+
+    '''Update Password (logged in)'''
+
     error = None
     # if website request POST, get username/password input
     # test input for correct/existing input combination saved in database(csv)
     if request.method == "POST":
-        username = request.form["username"]
+        try:
+            username = session['username']
+        except:
+            flash('Your session has timed out.')
+            return redirect('login')
         password = request.form["password"]
         new_password = request.form["new_password"]
         # prompt user to input username and password fields
-        if not username:
-            error = 'Please enter your username.'
-        elif not password:
-            error = 'Please enter your password.'
+        if not password:
+            error = 'Please enter existing your password.'
         elif not new_password:
             error = 'Please enter your new password.'
         elif username and password and new_password:
-            #error = all_checks(username, password, new_password)
+            temp.append(username)
+            error = new_password_check(password, new_password)
             if error is None:
-                return redirect('home')
+                temp.clear()
+                return redirect(url_for('index'))
         if error is not None:
-            # flash any error messages at bottom of page
+            # flash any error messages
             flash(error)
-        return render_template('password-update.html')
-    return render_template('password-update.html')
+        return render_template('update-password.html')
+    return render_template('update-password.html')
 
 @app.route('/admin')
 def admin():
@@ -243,7 +249,7 @@ def security_questions():
                 flash('Thanks for registering!')
                 # redirect to login page
                 return redirect('login')
-        # flash any error messages at bottom of page
+        # flash any error messages
         flash(error)
         return render_template('security-questions.html')
     return render_template('security-questions.html')
@@ -266,7 +272,7 @@ def update_password():
         new_password = request.form["new_password"]
         # prompt user to input username and password fields
         if not password:
-            error = 'Please enter existing your password.'
+            error = 'Please enter your existing password.'
         elif not new_password:
             error = 'Please enter your new password.'
         elif username and password and new_password:
@@ -335,6 +341,8 @@ def reset_password():
     '''Reset Password'''
 
     error = None
+    # if website request POST, get password input
+    # test for user input
     if request.method == "POST":
         password1 = request.form.get("password1")
         password2 = request.form.get("password2")
@@ -343,9 +351,11 @@ def reset_password():
         elif not password2:
             error = 'Please re-enter your new password.'
         elif password1 != password2:
-            error = 'Passwords are not the same.'
+            error = 'Password mismatch.'
+        # test new password for password criteria
         else:
             password_check(password1)
+            # continue if criteria met
             if error is None:
                 username = temp[0]
                 # loop through username and password columns in data list
