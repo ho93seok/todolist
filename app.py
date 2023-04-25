@@ -130,7 +130,7 @@ def password_update():
         elif not new_password:
             error = 'Please enter your new password.'
         elif username and password and new_password:
-            error = all_checks(username, password, new_password)
+            #error = all_checks(username, password, new_password)
             if error is None:
                 return redirect('home')
         if error is not None:
@@ -249,14 +249,15 @@ def security_questions():
     return render_template('security-questions.html')
 
 @app.route('/password-update', methods=["GET", "POST"])
-def password_update():
 
-    '''Password Update (loggin in)'''
+#def password_update():
 
-    return render_template(
-        'password-update.html',
-        page_title = 'Password Update'
-    )
+    # Password Update (loggin in)
+
+#    return render_template(
+#        'password-update.html',
+#        page_title = 'Password Update'
+#    )s
 
 @app.route('/forgot-password', methods=["GET", "POST"])
 def forgot_password():
