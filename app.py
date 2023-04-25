@@ -248,16 +248,38 @@ def security_questions():
         return render_template('security-questions.html')
     return render_template('security-questions.html')
 
-@app.route('/password-update', methods=["GET", "POST"])
+@app.route('/update-password', methods=["GET", "POST"])
+def update_password():
 
-#def password_update():
+    '''Update Password (logged in)'''
 
-    # Password Update (loggin in)
-
-#    return render_template(
-#        'password-update.html',
-#        page_title = 'Password Update'
-#    )s
+    error = None
+    # if website request POST, get username/password input
+    # test input for correct/existing input combination saved in database(csv)
+    if request.method == "POST":
+        try:
+            username = session['username']
+        except:
+            flash('Your session has timed out.')
+            return redirect('login')
+        password = request.form["password"]
+        new_password = request.form["new_password"]
+        # prompt user to input username and password fields
+        if not password:
+            error = 'Please enter existing your password.'
+        elif not new_password:
+            error = 'Please enter your new password.'
+        elif username and password and new_password:
+            temp.append(username)
+            error = new_password_check(password, new_password)
+            if error is None:
+                temp.clear()
+                return redirect(url_for('index'))
+        if error is not None:
+            # flash error message
+            flash(error)
+        return render_template('update-password.html')
+    return render_template('update-password.html')
 
 @app.route('/forgot-password', methods=["GET", "POST"])
 def forgot_password():
