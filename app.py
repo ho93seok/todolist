@@ -6,33 +6,17 @@ University of Maryland Global Campus
 """
 
 # Import dependencies.
-<<<<<<< HEAD
-<<<<<<< HEAD
-import os
-from flask import Flask, render_template, request, jsonify
-from pusher import Pusher
-import json
-=======
-import os, csv
-=======
 import os
 import csv
->>>>>>> main
 import re
-from flask import Flask, render_template, request, session, redirect, url_for, flash
+import json
+from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
+from pusher import Pusher
 from werkzeug.security import generate_password_hash, check_password_hash
->>>>>>> 2f328a8b9f746199905f510d023897cc9a9c32ec
-
 # Define globals
 pusher = Pusher()
 app = Flask(__name__)
 app.secret_key = os.urandom(16)
-
-<<<<<<< HEAD
-=======
-# temp list
-temp = []
->>>>>>> 2f328a8b9f746199905f510d023897cc9a9c32ec
 
 # helper function to read tasks from CSV
 def read_tasks():
