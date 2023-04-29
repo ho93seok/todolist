@@ -33,6 +33,21 @@ def write_tasks(tasks):
         writer = csv.writer(f)
         writer.writerows(tasks)
 
+# helper function to read tasks from CSV
+def read_tasks():
+    tasks = []
+    with open('tasks.csv', 'r') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            tasks.append(row)
+    return tasks
+
+# helper function to write tasks to CSV
+def write_tasks(tasks):
+    with open('tasks.csv', 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerows(tasks)
+
 # Define routes.
 @app.route('/')
 def index():
