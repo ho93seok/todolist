@@ -13,25 +13,14 @@ import json
 from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
 from pusher import Pusher
 from werkzeug.security import generate_password_hash, check_password_hash
+
 # Define globals
 pusher = Pusher()
 app = Flask(__name__)
 app.secret_key = os.urandom(16)
 
-# helper function to read tasks from CSV
-def read_tasks():
-    tasks = []
-    with open('tasks.csv', 'r') as f:
-        reader = csv.reader(f)
-        for row in reader:
-            tasks.append(row)
-    return tasks
-
-# helper function to write tasks to CSV
-def write_tasks(tasks):
-    with open('tasks.csv', 'w', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerows(tasks)
+# temp list
+temp = []
 
 # helper function to read tasks from CSV
 def read_tasks():
@@ -170,7 +159,7 @@ def create_task():
         task = request.form['task_name']
         description = request.form['description']
         due_date = request.form['due_date']
-        list-id = request.form['list-id']
+        list_id = request.form['list-id']
 
         tasks = read_tasks()
         tasks.append([task, description, due_date])
