@@ -9,10 +9,13 @@ University of Maryland Global Campus
 import os
 import csv
 import re
-from flask import Flask, render_template, request, session, redirect, url_for, flash
+import json
+from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
+from pusher import Pusher
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Define globals
+pusher = Pusher()
 app = Flask(__name__)
 app.secret_key = os.urandom(16)
 
@@ -156,6 +159,7 @@ def create_task():
         task = request.form['task_name']
         description = request.form['description']
         due_date = request.form['due_date']
+        list_id = request.form['list-id']
 
         tasks = read_tasks()
         tasks.append([task, description, due_date])
@@ -196,19 +200,53 @@ def delete_task(id):
 
     return redirect(url_for('index'))
 
+def read_lists():
+    lists = []
+    with open('lists.csv', 'r') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            lists.append(row)
+    return lists
+
+def write_lists(lists):
+    with open('lists.csv', 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerows(lists)
+
 @app.route('/create-list', methods=['GET', 'POST'])
 def create_list():
-    return render_template('create_task.html')
+    if request.method == 'POST':
+        list = request.form['list']
 
-@app.route('/edit-list', methods=['GET', 'POST'])
+        lists = read_lists()
+        lists.append([list])
+        write_lists(lists)
+
+        return redirect(url_for('index'))
+    return render_template('create_list.html')
+
+@app.route('/edit-list/<int:id>', methods=['GET', 'POST'])
 def edit_list():
-    return render_template('edit_list.html')
+    lists = read_lists()
+    lists = lists[id]
+
+    if request.method == 'POST':
+        task = request.form['task']
+        description = request.form['description']
+
+        task[0] = description
+
+        write_tasks(lists)
+
+        return redirect(url_for('index'))
+    return render_template('edit_list.html', task_id=id, list=list)
 
 @app.route('/delete-list/<int:id>')
-def delete_list():
-    return render_template('delete_list.html')
-
-@app.route('/security-questions', methods=["GET", "POST"])
+def delete_list(id):
+    lists = read_lists()
+    lists.pop(id)
+    write_lists(lists)
+    return redirect(url_for('index'))
 def security_questions():
 
     '''Security Questions'''
