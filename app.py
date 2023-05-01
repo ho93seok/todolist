@@ -159,7 +159,10 @@ def create_task():
 
         return redirect(url_for('index'))
 
-    return render_template('create_task.html')
+    return render_template(
+        'create-task.html',
+        page_title = 'Add a task'
+        )
 
 @app.route('/edit-task/<int:id>', methods=['GET', 'POST'])
 def edit_task(id):
@@ -189,17 +192,54 @@ def delete_task(id):
 
     return redirect(url_for('index'))
 
+def read_lists():
+    lists = []
+    with open('tasks.csv', 'r') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            lists.append(row)
+    return lists
+
+def write_lists(lists):
+    with open('tasks.csv', 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerows(lists)
+
 @app.route('/create-list', methods=['GET', 'POST'])
 def create_list():
-    return render_template('create_task.html')
+    if request.method == 'POST':
+        list = request.form['list']
+        description = request.form['description']
 
-@app.route('/edit-list', methods=['GET', 'POST'])
+        tasks = read_tasks()
+        tasks.append([list, description])
+        write_tasks(tasks)
+
+        return redirect(url_for('index'))
+    return render_template('create_list.html')
+
+@app.route('/edit-list/<int:id>', methods=['GET', 'POST'])
 def edit_list():
-    return render_template('edit_list.html')
+    lists = read_lists()
+    lists = lists[id]
+
+    if request.method == 'POST':
+        task = request.form['task']
+        description = request.form['description']
+
+        task[0] = description
+
+        write_tasks(lists)
+
+        return redirect(url_for('index'))
+    return render_template('edit_list.html', task_id=id, list=list)
 
 @app.route('/delete-list/<int:id>')
-def delete_list():
-    return render_template('delete_list.html')
+def delete_list(id):
+    lists = read_lists()
+    lists.pop(id)
+    write_lists(lists)
+    return redirect(url_for('index'))
 
 @app.route('/security-questions', methods=["GET", "POST"])
 def security_questions():
@@ -241,14 +281,14 @@ def security_questions():
         return render_template('security-questions.html')
     return render_template('security-questions.html')
 
-@app.route('/password-update', methods=["GET", "POST"])
-def password_update():
+@app.route('/update-password', methods=["GET", "POST"])
+def update_password():
 
-    '''Password Update (loggin in)'''
+    '''Update Password (loggin in)'''
 
     return render_template(
-        'password-update.html',
-        page_title = 'Password Update'
+        'update-password.html',
+        page_title = 'Update Password'
     )
 
 @app.route('/forgot-password', methods=["GET", "POST"])
