@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+
+  <head>
+    <title>{{site_title}}</title>
+    <meta charset="utf-8">
+    <meta name="description" content={{site_description}}>
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    {% block css %}{% endblock %}
+  </head>
+
+  <body>
+    <!-- start wrapper -->
+    <div id="wrapper">
+    {% include 'site-header.html' %}
+    {% include 'page-header.html' %}
+    {% with messages = get_flashed_messages() %}
+
+        {% if messages %}
+            <div class="flashes {% if form_error %}error{% endif %}">
+                <div class="flashes-content">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+    {% include 'site-footer.html' %}
+    </div><!-- end wrapper -->
+  </body>
+
+</html>

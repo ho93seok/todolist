@@ -1,0 +1,24 @@
+{% if loggedin%} 
+<style>
+    .page-header .col{
+        width: 50%;
+    }
+</style>
+{% endif %}
+
+<!-- start page header -->
+<div class="page-header">
+    <div class="content">
+
+        <div class="col">
+            <h1>{{page_title}}</h1>
+        </div>
+
+        {% if loggedin%}
+        <div class="col">
+            <p style="text-align: right;">Welcome <strong>{{ username }}</strong>. You are logged in.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+<!-- end page header -->

@@ -1,0 +1,33 @@
+<h1>{{ list.name }}</h1>
+
+<!-- Task list -->
+<ul>
+  {% for task in list.tasks %}
+    <li>
+      {{ task.name }}
+      <form action="{{('delete-task', int=id) }}" method="post" style="display: inline;">
+        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+      </form>
+      <a href="{{('edit-task', task_id=task.id) }}" class="btn btn-secondary btn-sm">Edit</a>
+    </li>
+  {% endfor %}
+</ul>
+
+<!-- New task form -->
+<form action="{{('create-task', list-id=list.id) }}" method="post">
+  <div class="form-group">
+    <label for="task">Task name:</label>
+    <label>
+      <input type="text" name="name" class="form-control" required>
+    </label>
+  </div>
+  <button type="submit" class="btn btn-primary">Add task</button>
+</form>
+
+<!-- Edit list button -->
+<a href="{{ url_for('edit-list', list-id=list.id) }}" class="btn btn-secondary">Edit list name</a>
+
+<!-- Delete list button -->
+<form action="{{('delete-list', list-id=list.id) }}" method="post" style="display: inline;">
+  <button type="submit" class="btn btn-danger">Delete list</button>
+</form>
