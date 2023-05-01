@@ -165,3 +165,30 @@ form #submit-btn:hover{
     cursor: pointer;
     background: #7200ca;
 }
+/************************
+Home
+************************/
+#home-add-task{
+    background-color: transparent;
+    width: auto;
+    height: auto;
+    display: inline-block;
+    margin: 30px 0;
+    padding: 0;
+    line-height: auto;
+}
+#home-add-task input[type=submit]{
+    background-color: #ffffff;
+    width: 100%;
+    margin: initial;
+    padding: 10px 20px;
+    font-weight: bold;
+    color: #0d6efd;
+    border: 1px solid #0d6efd;
+    transition: .2s;
+}
+#home-add-task input[type=submit]:hover{
+    cursor: pointer;
+    background-color: #0d6efd;
+    color: #ffffff;
+}

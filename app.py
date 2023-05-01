@@ -192,16 +192,24 @@ def delete_task(id):
 
     return redirect(url_for('index'))
 
+@app.route('/list/<int:id>')
+def list(id):
+    lists = read_lists()
+    list = lists[id]
+
+    return render_template('edit_task.html', task_id=id, task=task)
+
+
 def read_lists():
     lists = []
-    with open('tasks.csv', 'r') as f:
+    with open('lists.csv', 'r') as f:
         reader = csv.reader(f)
         for row in reader:
             lists.append(row)
     return lists
 
 def write_lists(lists):
-    with open('tasks.csv', 'w', newline='') as f:
+    with open('lists.csv', 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerows(lists)
 
@@ -211,9 +219,9 @@ def create_list():
         list = request.form['list']
         description = request.form['description']
 
-        tasks = read_tasks()
-        tasks.append([list, description])
-        write_tasks(tasks)
+        lists = read_lists()
+        lists.append([list, description])
+        write_tasks(lists)
 
         return redirect(url_for('index'))
     return render_template('create_list.html')
@@ -224,12 +232,13 @@ def edit_list():
     lists = lists[id]
 
     if request.method == 'POST':
-        task = request.form['task']
+        list = request.form['list']
         description = request.form['description']
 
-        task[0] = description
+        list[0] = list
+        list[1] = description
 
-        write_tasks(lists)
+        write_lists(lists)
 
         return redirect(url_for('index'))
     return render_template('edit_list.html', task_id=id, list=list)
