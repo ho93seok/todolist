@@ -11,11 +11,11 @@ import csv
 import re
 import json
 from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
-from pusher import Pusher
+# from pusher import Pusher
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Define globals
-pusher = Pusher()
+# pusher = Pusher()
 app = Flask(__name__)
 app.secret_key = os.urandom(16)
 
@@ -159,7 +159,7 @@ def create_task():
         task = request.form['task_name']
         description = request.form['description']
         due_date = request.form['due_date']
-        list_id = request.form['list-id']
+        #list_id = request.form['list-id']
 
         tasks = read_tasks()
         tasks.append([task, description, due_date])
@@ -228,7 +228,7 @@ def create_list():
 @app.route('/edit-list/<int:id>', methods=['GET', 'POST'])
 def edit_list():
     lists = read_lists()
-    lists = lists[id]
+    #lists = lists[id]
 
     if request.method == 'POST':
         task = request.form['task']
@@ -244,9 +244,14 @@ def edit_list():
 @app.route('/delete-list/<int:id>')
 def delete_list(id):
     lists = read_lists()
-    lists.pop(id)
-    write_lists(lists)
-    return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        lists.pop(id)
+        write_lists(lists)
+        return redirect(url_for('index'))
+    return render_template('delete_list.html')
+
+@app.route('/security-questions', methods=["GET", "POST"])
 def security_questions():
 
     '''Security Questions'''
