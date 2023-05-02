@@ -1,5 +1,10 @@
-Get groceries,sdfsdf,2023-05-12
-Get gas,Test,2023-05-25
-Complete Phase 3 doc,,2023-05-02
-Make the bed,,"('2023-05-04',)",3631
-Make the bed,tsetsets,"('2023-05-05',)",8071
+Get groceries,sdfsdf,2023-05-12,1,0
+Get gas,Test,2023-05-25,2,0
+Complete Phase 3 doc,description,2023-05-02,0,8337
+Make the bed again,test,,3631,116
+Make the bed twice,tsetsets,,8071,0
+Send invoices,for last month only,"('2023-05-03',)","(5910,)",0
+Call Bill,check in,"('2023-05-12',)","(3352,)",0
+asdasda,asdasd,"('2023-05-30',)","(7859,)",0
+dafgsg,sdfsdf,"('2023-05-19',)","(6864,)",0
+Get food,sdfsdf,"('2023-05-12',)","(8773,)",0

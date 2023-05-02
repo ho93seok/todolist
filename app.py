@@ -54,7 +54,7 @@ def index():
         'home.html',
         site_title = site_title,
         site_description = "A to-do list application by Group 4.",
-        page_title = 'To-do List',
+        page_title = 'Home',
         tasks = read_csv( 'tasks.csv' ),
         lists = read_csv( 'lists.csv' ),
         todo_list = []
@@ -181,11 +181,11 @@ def create_task():
         task = request.form['task_name']
         description = request.form['description']
         due_date = request.form['due_date'],
-        task_id = randrange( 9999 )
-        #list_id = request.form['list-id']
+        task_id = randrange( 9999 ),
+        list_id = 0 # Use Default List ID of 0 for new tasks.
 
         tasks = read_csv( 'tasks.csv' )
-        tasks.append([task, description, due_date, task_id])
+        tasks.append([task, description, due_date, task_id, list_id])
         write_csv( 'tasks.csv', tasks)
 
         return redirect(url_for('index'))
@@ -195,9 +195,46 @@ def create_task():
         page_title = 'Add a task'
         )
 
+@app.route('/edit-task/<string:task_id>/<string:task_name>/<string:task_description>/<string:task_due_date>/<string:list_id>', methods=['GET', 'POST'])
+def edit_task( task_id, task_name, task_description, task_due_date, list_id ):
+
+    '''Route for editing a task'''
+
+    tasks = read_csv( 'tasks.csv' )
+
+    if request.method == 'POST':
+
+        for task in tasks :
+            
+            if task[3] == request.form['task_id'] : 
+
+                task_name = request.form['task_name']
+                description = request.form['description']
+                due_date = request.form['due_date']
+                list_id = request.form['list_id']
+
+                task[0] = task_name
+                task[1] = description
+                task[2] = due_date
+                task[4] = list_id
+
+        write_csv( 'tasks.csv', tasks )
+
+        return redirect(url_for('index'))
+    
+    return render_template(
+        'edit-task.html',
+        page_title = 'Edit Task: ' + task_name,
+        task_id=task_id,
+        task_name = task_name,
+        description =  task_description,
+        due_date = task_due_date,
+        list_id =  list_id
+        )
+
 # Code by Ryan Hunt.
 @app.route('/edit_task/<int:list_index>/<int:task_index>', methods=['GET', 'POST'])
-def edit_task(list_index, task_index):
+def rh_edit_task(list_index, task_index):
 
     '''Route for editing a task'''
 
@@ -247,6 +284,19 @@ def create_list():
         list_id = randrange( 9999 )
         )
 
+# Code by Aaron Bolton.
+@app.route('/view-list/<string:list_name>/<string:list_id>', methods=['GET', 'POST'])
+def view_list( list_name, list_id ):
+
+    '''Route for viewing a list.'''
+
+    return render_template(
+        'view-list.html',
+        page_title = list_name,
+        list_id = list_id,
+        tasks = read_csv( 'tasks.csv' )
+        )
+
 # Code by Ryan Hunt.
 @app.route('/new-list', methods=['GET', 'POST'])
 def new_list():
@@ -260,7 +310,7 @@ def new_list():
         todo_list.append(task_list)
 
         return redirect(url_for('index'))
-    
+
     return render_template('new-list.html')
 
 # Code by Ryan Hunt.
