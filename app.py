@@ -6,17 +6,36 @@ University of Maryland Global Campus
 """
 
 # Import dependencies.
-import os, csv
+import os
+import csv
 import re
-from flask import Flask, render_template, request, session, redirect, url_for, flash
+import json
+from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
+# from pusher import Pusher
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Define globals
+# pusher = Pusher()
 app = Flask(__name__)
 app.secret_key = os.urandom(16)
 
 # temp list
 temp = []
+
+# helper function to read tasks from CSV
+def read_tasks():
+    tasks = []
+    with open('tasks.csv', 'r') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            tasks.append(row)
+    return tasks
+
+# helper function to write tasks to CSV
+def write_tasks(tasks):
+    with open('tasks.csv', 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerows(tasks)
 
 # Define routes.
 @app.route('/')
@@ -32,7 +51,9 @@ def index():
         'home.html',
         site_title = site_title,
         site_description = "A to-do list application by Group 4.",
-        page_title = 'To-do List'
+        page_title = 'To-do List',
+        tasks = read_tasks(),
+        lists = read_lists()
     )
 
 # Register
@@ -113,7 +134,7 @@ def password_update():
         elif not new_password:
             error = 'Please enter your new password.'
         elif username and password and new_password:
-            error = all_checks(username, password, new_password)
+            #error = all_checks(username, password, new_password)
             if error is None:
                 return redirect('home')
         if error is not None:
@@ -131,30 +152,18 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
 
-# helper function to read tasks from CSV
-def read_tasks():
-    tasks = []
-    with open('tasks.csv', 'r') as f:
-        reader = csv.reader(f)
-        for row in reader:
-            tasks.append(row)
-    return tasks
-
-# helper function to write tasks to CSV
-def write_tasks(tasks):
-    with open('tasks.csv', 'w', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerows(tasks)
-
 @app.route('/create-task', methods=['GET', 'POST'])
 def create_task():
+
     if request.method == 'POST':
-        task = request.form['task']
-        description = request.form['description']
+
+        task = request.form['task_name']
+        task_description = request.form['task_description']
         due_date = request.form['due_date']
+        list_name = request.form['list_name']
 
         tasks = read_tasks()
-        tasks.append([task, description, due_date])
+        tasks.append([task, task_description, due_date, list_name])
         write_tasks(tasks)
 
         return redirect(url_for('index'))
@@ -192,14 +201,6 @@ def delete_task(id):
 
     return redirect(url_for('index'))
 
-@app.route('/list/<int:id>')
-def list(id):
-    lists = read_lists()
-    list = lists[id]
-
-    return render_template('edit_task.html', task_id=id, task=task)
-
-
 def read_lists():
     lists = []
     with open('lists.csv', 'r') as f:
@@ -216,29 +217,31 @@ def write_lists(lists):
 @app.route('/create-list', methods=['GET', 'POST'])
 def create_list():
     if request.method == 'POST':
-        list = request.form['list']
-        description = request.form['description']
+        list = request.form['list_name']
+        list_description = request.form['list_description']
 
         lists = read_lists()
-        lists.append([list, description])
-        write_tasks(lists)
+        lists.append([list, list_description])
+        write_lists(lists)
 
         return redirect(url_for('index'))
-    return render_template('create_list.html')
+    return render_template(
+        'create-list.html',
+        page_title = 'Add a list'
+        )
 
 @app.route('/edit-list/<int:id>', methods=['GET', 'POST'])
 def edit_list():
     lists = read_lists()
-    lists = lists[id]
+    #lists = lists[id]
 
     if request.method == 'POST':
-        list = request.form['list']
+        task = request.form['task']
         description = request.form['description']
 
-        list[0] = list
-        list[1] = description
+        task[0] = description
 
-        write_lists(lists)
+        write_tasks(lists)
 
         return redirect(url_for('index'))
     return render_template('edit_list.html', task_id=id, list=list)
@@ -246,9 +249,12 @@ def edit_list():
 @app.route('/delete-list/<int:id>')
 def delete_list(id):
     lists = read_lists()
-    lists.pop(id)
-    write_lists(lists)
-    return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        lists.pop(id)
+        write_lists(lists)
+        return redirect(url_for('index'))
+    return render_template('delete_list.html')
 
 @app.route('/security-questions', methods=["GET", "POST"])
 def security_questions():
@@ -293,12 +299,35 @@ def security_questions():
 @app.route('/update-password', methods=["GET", "POST"])
 def update_password():
 
-    '''Update Password (loggin in)'''
+    '''Update Password (logged in)'''
 
-    return render_template(
-        'update-password.html',
-        page_title = 'Update Password'
-    )
+    error = None
+    # if website request POST, get username/password input
+    # test input for correct/existing input combination saved in database(csv)
+    if request.method == "POST":
+        try:
+            username = session['username']
+        except:
+            flash('Your session has timed out.')
+            return redirect('login')
+        password = request.form["password"]
+        new_password = request.form["new_password"]
+        # prompt user to input username and password fields
+        if not password:
+            error = 'Please enter existing your password.'
+        elif not new_password:
+            error = 'Please enter your new password.'
+        elif username and password and new_password:
+            temp.append(username)
+            error = new_password_check(password, new_password)
+            if error is None:
+                temp.clear()
+                return redirect(url_for('index'))
+        if error is not None:
+            # flash error message
+            flash(error)
+        return render_template('update-password.html')
+    return render_template('update-password.html')
 
 @app.route('/forgot-password', methods=["GET", "POST"])
 def forgot_password():
