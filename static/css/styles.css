@@ -168,7 +168,18 @@ form #submit-btn:hover{
 /************************
 Home
 ************************/
-#home-add-task{
+.columns{
+    display: flex;
+    flex-wrap: wrap;
+}
+.two-column-layout .column{
+    width: 50%;
+}
+.three-column-layout .column{
+    width: 33.333%;
+    flex: 1;
+}
+.home-action-form{
     background-color: transparent;
     width: auto;
     height: auto;
@@ -177,7 +188,7 @@ Home
     padding: 0;
     line-height: auto;
 }
-#home-add-task input[type=submit]{
+.home-action-form input[type=submit]{
     background-color: #ffffff;
     width: 100%;
     margin: initial;
@@ -187,7 +198,7 @@ Home
     border: 1px solid #0d6efd;
     transition: .2s;
 }
-#home-add-task input[type=submit]:hover{
+.home-action-form input[type=submit]:hover{
     cursor: pointer;
     background-color: #0d6efd;
     color: #ffffff;

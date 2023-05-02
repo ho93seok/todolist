@@ -9,30 +9,70 @@
                 <h2>Welcome {{session['username']}}!</h2>
             {% endif %}
 
-            <form action="{{ url_for('create_task') }}" id="home-add-task">
-                <input type="submit" value="Add a task" />
-            </form>
+            <p>&nbsp;</p>
 
-            {% if tasks %}
-            <h3>Task List</h3>
-            <ul>
-                {% for item in tasks %}
-                    <li><a href="#">{{ item[0] }}</a></li>
-                {% endfor %}
-            </ul>
-            {% endif %}
+            <div class="columns three-column-layout">
+                <div class="column">
+                    <h3>Task Lists</h3>
+                    <ol>
+                        <li><a href="#">Default List</a></li>
 
-            <form method="POST" action="{{ url_for('create_list') }}"></form>
-            <h3>Projects List</h3>
-            <ol>
-                <li><a href="#">Work</a></li>
-                <li><a href="#">Education</a></li>
-                <li><a href="#">Personal</a></li>
-                {% for list in list %}
-                <li><a href="#">list.title</a></li>
-                
-                {% endfor %}
-            </ol>
+                        {% if lists %}
+                            {% for item in lists %}
+
+                            <li><a href="#">{{ item[0] }}</a></li>
+                            
+                            {% endfor %}
+                        {% endif %}
+                    </ol>
+
+                    <form action="{{ url_for('create_list') }}" id="home-add-list" class="home-action-form">
+                        <input type="submit" value="Add a list" />
+                    </form>
+                </div>
+
+                <div class="column">
+                    {% if tasks %}
+                    <h3>Recent Tasks</h3>
+                    <ul>
+                        {% for item in tasks %}
+                            <li>
+                                <p>
+                                    <a href="#">{{ item[0] }}</a><br>
+                                    <span style="font-size: 10pt;"><strong>List:</strong> 
+                                        {% if item[4] %} 
+                                            <a href="#">{{ item[4] }}</a>
+                                            {% else %}
+                                            <a href="#">Default List</a>
+                                        {% endif %}
+                                    </span><br>
+                                    <span style="font-size: 10pt;"><strong>Due Date:</strong> {{ item[2] }}</span>
+                                </p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+
+                    <form action="{{ url_for('create_task') }}" id="home-add-task" class="home-action-form">
+                        <input type="submit" value="Add a task" />
+                    </form>
+                </div>
+
+                <div class="column">
+                    {% if tasks %}
+                    <h3>Completed Tasks</h3>
+                    <ul>
+                        {% for item in tasks %}
+                            <li>
+                                    <s>{{ item[0] }}</s><br>
+                                    <span style="font-size: 10pt;"><strong>List:</strong> <a href="#">Title</a></span> • 
+                                    <span style="font-size: 10pt;"><strong>Due Date:</strong> {{ item[2] }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
     </div>
     <!-- end content -->
 {% endblock %}
