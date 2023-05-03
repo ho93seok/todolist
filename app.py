@@ -92,6 +92,13 @@ def register():
                     # clear data list
                     data.clear()
 
+                    # Create default list.
+                    task_list_name = 'Default List'
+                    task_list_id = 0
+                    task_lists = read_csv( 'lists.csv' )
+                    task_lists.append([task_list_name, task_list_id])
+                    write_csv( 'lists.csv', task_lists )
+
                     # redirect to security questions
                     return redirect(url_for('security_questions'))
 
@@ -182,7 +189,7 @@ def create_task():
         description = request.form['description']
         due_date = request.form['due_date'],
         task_id = randrange( 9999 ),
-        list_id = 0 # Use Default List ID of 0 for new tasks.
+        list_id = request.form['list_id'], # Uses Default List ID of 0 for new tasks.
 
         tasks = read_csv( 'tasks.csv' )
         tasks.append([task, description, due_date, task_id, list_id])

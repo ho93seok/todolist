@@ -15,13 +15,16 @@
                 <h1>{{page_title}}</h1>
             </div>
             <div class="column">
-                <form action="{{ url_for('create_task') }}" id="home-add-task" class="home-action-form">
-                    <input type="submit" value="Add a task" />
-                </form>
 
-                <form action="{{ url_for('create_list') }}" id="home-add-list" class="home-action-form">
-                    <input type="submit" value="Add a list" />
-                </form>
+                <div class="action-button-wrap">
+                    <form action="{{ url_for('create_task') }}" id="action-button-add-task" class="action-button-form">
+                        <input type="submit" value="Add a task" />
+                    </form>
+
+                    <form action="{{ url_for('create_list') }}" id="action-button-add-list" class="action-button-form">
+                        <input type="submit" value="Add a list" />
+                    </form>
+                </div>
             </div>
 
             {% if loggedin%}

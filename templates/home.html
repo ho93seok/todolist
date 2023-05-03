@@ -14,19 +14,17 @@
             <div class="columns three-column-layout">
                 <div class="column">
 
+                    {% if lists %}
                     <h3>Task Lists</h3>
 
                     <ol>
-                        <li><a href="#">Default List</a></li>
-
-                        {% if lists %}
                             {% for list in lists %}
 
                             <li><a href="{{ url_for( 'view_list', list_name=list[0], list_id=list[1] ) }}">{{ list[0] }}</a></li>
                             
                             {% endfor %}
-                        {% endif %}
                     </ol>
+                    {% endif %}
                 </div>
 
                 <div class="column">
