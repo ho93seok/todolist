@@ -8,34 +8,37 @@ University of Maryland Global Campus
 # Import dependencies.
 import os
 import csv
+from random import randrange
 import re
-import json
-from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
-# from pusher import Pusher
+from flask import Flask, render_template, request, session, redirect, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Define globals
-# pusher = Pusher()
 app = Flask(__name__)
 app.secret_key = os.urandom(16)
+todo_list = []
 
 # temp list
 temp = []
 
-# helper function to read tasks from CSV
-def read_tasks():
+def read_csv( file_name ):
+    '''
+    Helper function to read items from CSV
+    '''
     tasks = []
-    with open('tasks.csv', 'r') as f:
-        reader = csv.reader(f)
+    with open( file_name, 'r', encoding='utf8') as file:
+        reader = csv.reader(file)
         for row in reader:
             tasks.append(row)
     return tasks
 
-# helper function to write tasks to CSV
-def write_tasks(tasks):
-    with open('tasks.csv', 'w', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerows(tasks)
+def write_csv( file_name, content ):
+    '''
+    Helper function to write tasks to CSV
+    '''
+    with open( file_name, 'w', newline='', encoding='utf8') as file:
+        writer = csv.writer(file)
+        writer.writerows( content )
 
 # Define routes.
 @app.route('/')
@@ -51,8 +54,10 @@ def index():
         'home.html',
         site_title = site_title,
         site_description = "A to-do list application by Group 4.",
-        page_title = 'To-do List',
-        tasks = read_tasks()
+        page_title = 'Home',
+        tasks = read_csv( 'tasks.csv' ),
+        lists = read_csv( 'lists.csv' ),
+        todo_list = []
     )
 
 # Register
@@ -81,26 +86,41 @@ def register():
             else:
                 error = password_check(password)
                 if error is None:
-                        temp.append(username)
-                        temp.append(password)
-                        # clear data list
-                        data.clear()
-                        # redirect to security questions
-                        return redirect(url_for('security_questions'))
+                    temp.append(username)
+                    temp.append(password)
+
+                    # clear data list
+                    data.clear()
+
+                    # Create default list.
+                    task_list_name = 'Default List'
+                    task_list_id = 0
+                    task_lists = read_csv( 'lists.csv' )
+                    task_lists.append([task_list_name, task_list_id])
+                    write_csv( 'lists.csv', task_lists )
+
+                    # redirect to security questions
+                    return redirect(url_for('security_questions'))
+
         # flash any error messages at bottom of page
         flash(error)
+
         return render_template('register.html')
+
     return render_template('register.html')
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
+
+    '''Log In Page'''
+
     temp.clear()
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
 
-        with open('users.csv', 'r') as f:
-            reader = csv.reader(f, delimiter=',')
+        with open('users.csv', 'r', encoding='utf8') as file:
+            reader = csv.reader(file, delimiter=',')
             for row in reader:
                 if row[0] == username:
                     if check_password_hash(row[1], password):
@@ -114,8 +134,8 @@ def login():
             return render_template('login.html', error=error)
     else:
         return render_template('login.html')
-    
-@app.route('/admin/password-update')    
+
+@app.route('/admin/password-update')
 def password_update():
     """function returns page for user to update password (while logged in)"""
     error = None
@@ -144,26 +164,36 @@ def password_update():
 
 @app.route('/admin')
 def admin():
+
+    '''Registration Page'''
+
     return render_template('admin.html')
 
 @app.route('/logout')
 def logout():
+
+    '''Define the log out functionality'''
+
     session.pop('username', None)
+
     return redirect(url_for('login'))
 
 @app.route('/create-task', methods=['GET', 'POST'])
 def create_task():
 
+    '''Define the functionality for creating tasks.'''
+
     if request.method == 'POST':
 
         task = request.form['task_name']
         description = request.form['description']
-        due_date = request.form['due_date']
-        #list_id = request.form['list-id']
+        due_date = str( request.form['due_date'] )
+        task_id = str( randrange( 9999 ) )
+        list_id = str( request.form['list_id'] ) # Uses Default List ID of 0 for new tasks.
 
-        tasks = read_tasks()
-        tasks.append([task, description, due_date])
-        write_tasks(tasks)
+        tasks = read_csv( 'tasks.csv' )
+        tasks.append([task, description, due_date, task_id, list_id])
+        write_csv( 'tasks.csv', tasks)
 
         return redirect(url_for('index'))
 
@@ -172,85 +202,167 @@ def create_task():
         page_title = 'Add a task'
         )
 
-@app.route('/edit-task/<int:id>', methods=['GET', 'POST'])
-def edit_task(id):
-    tasks = read_tasks()
-    task = tasks[id]
+@app.route('/edit-task/<string:task_id>/<string:task_name>/<string:task_description>/<string:task_due_date>/<string:list_id>', methods=['GET', 'POST'])
+def edit_task( task_id, task_name, task_description, task_due_date, list_id ):
+
+    '''Route for editing a task'''
+
+    tasks = read_csv( 'tasks.csv' )
 
     if request.method == 'POST':
-        task = request.form['task']
-        description = request.form['description']
-        due_date = request.form['due_date']
 
-        task[0] = task
-        task[1] = description
-        task[2] = due_date
+        for task in tasks :
+            
+            if task[3] == request.form['task_id'] : 
 
-        write_tasks(tasks)
+                task_name = request.form['task_name']
+                description = request.form['description']
+                due_date = request.form['due_date']
+                list_id = request.form['list_id']
+
+                task[0] = task_name
+                task[1] = description
+                task[2] = due_date
+                task[4] = list_id
+
+        write_csv( 'tasks.csv', tasks )
 
         return redirect(url_for('index'))
+    
+    return render_template(
+        'edit-task.html',
+        page_title = 'Edit Task: ' + task_name,
+        task_id=task_id,
+        task_name = task_name,
+        description =  task_description,
+        due_date = task_due_date,
+        list_id =  list_id
+        )
 
-    return render_template('edit_task.html', task_id=id, task=task)
+# Code by Ryan Hunt.
+@app.route('/edit_task/<int:list_index>/<int:task_index>', methods=['GET', 'POST'])
+def rh_edit_task(list_index, task_index):
 
-@app.route('/delete-task/<int:id>')
-def delete_task(id):
-    tasks = read_tasks()
-    tasks.pop(id)
-    write_tasks(tasks)
+    '''Route for editing a task'''
+
+    rh_todo_list = rh_read_csv()
+    if request.method == 'POST':
+        new_task = {
+            'description': request.form['description'],
+            'due_date': request.form['due_date']
+        }
+        rh_todo_list[list_index]['tasks'][task_index] = new_task
+        rh_write_csv(rh_todo_list)
+        return redirect(url_for('view_list', list_index=list_index))
+    else:
+        task = rh_todo_list[list_index]['tasks'][task_index]
+        return render_template('edit_task.html', task_index=task_index, task=task)
+
+# Code by Ryan Hunt.
+@app.route('/delete_task/<int:list_index>/<int:task_index>')
+def delete_task(list_index, task_index):
+
+    '''Route for deleting a task.'''
+
+    todo_list[list_index]['tasks'].pop(task_index)
 
     return redirect(url_for('index'))
 
-def read_lists():
-    lists = []
-    with open('lists.csv', 'r') as f:
-        reader = csv.reader(f)
-        for row in reader:
-            lists.append(row)
-    return lists
-
-def write_lists(lists):
-    with open('lists.csv', 'w', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerows(lists)
-
+# Code by Aaron Bolton.
 @app.route('/create-list', methods=['GET', 'POST'])
 def create_list():
-    if request.method == 'POST':
-        list = request.form['list']
 
-        lists = read_lists()
-        lists.append([list])
-        write_lists(lists)
-
-        return redirect(url_for('index'))
-    return render_template('create_list.html')
-
-@app.route('/edit-list/<int:id>', methods=['GET', 'POST'])
-def edit_list():
-    lists = read_lists()
-    #lists = lists[id]
+    '''Route for creating a new list.'''
 
     if request.method == 'POST':
-        task = request.form['task']
-        description = request.form['description']
 
-        task[0] = description
+        task_list_name = request.form['list_name']
+        task_list_id = request.form['list_id']
 
-        write_tasks(lists)
+        task_lists = read_csv( 'lists.csv' )
+        task_lists.append([task_list_name, task_list_id])
+        write_csv( 'lists.csv', task_lists )
 
         return redirect(url_for('index'))
-    return render_template('edit_list.html', task_id=id, list=list)
 
-@app.route('/delete-list/<int:id>')
-def delete_list(id):
-    lists = read_lists()
+    return render_template(
+        'create-list.html',
+        page_title = 'Add a list',
+        list_id = randrange( 9999 )
+        )
+
+# Code by Aaron Bolton.
+@app.route('/view-list/<string:list_name>/<string:list_id>', methods=['GET', 'POST'])
+def view_list( list_name, list_id ):
+
+    '''Route for viewing a list.'''
+
+    return render_template(
+        'view-list.html',
+        page_title = list_name,
+        list_id = list_id,
+        tasks = read_csv( 'tasks.csv' )
+        )
+
+# Code by Ryan Hunt.
+@app.route('/new-list', methods=['GET', 'POST'])
+def new_list():
+
+    '''Route for creating a new list.'''
 
     if request.method == 'POST':
-        lists.pop(id)
-        write_lists(lists)
-        return redirect(url_for('index'))
-    return render_template('delete_list.html')
 
+        name = request.form['list_name']
+        task_list = {'name': name, 'tasks': []}
+        todo_list.append(task_list)
+
+        return redirect(url_for('index'))
+
+    return render_template('new-list.html')
+
+# Code by Ryan Hunt.
+def rh_read_csv():
+
+    '''Helper function to read tasks from CSV.'''
+
+    tasks = []
+    with open('todo_list.csv', 'r', encoding='utf8') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            tasks.append(row)
+    return tasks
+
+# Code by Ryan Hunt.
+def rh_write_csv(tasks):
+
+    '''Helper function to write tasks to CSV.'''
+
+    with open('tasks.csv', 'w', newline='', encoding='utf8') as file:
+        writer = csv.writer(file)
+        writer.writerows(tasks)
+
+# Code by Ryan Hunt.
+@app.route('/edit_list/<int:list_index>', methods=['GET', 'POST'])
+def edit_list(list_index):
+
+    '''Route for editing a list.'''
+
+    if request.method == 'POST':
+        name = request.form['name']
+        todo_list[list_index]['name'] = name
+        return redirect(url_for('index'))
+    return render_template('edit_list.html', list_index=list_index)
+
+# Code by Ryan Hunt.
+@app.route('/delete_list/<int:list_index>')
+def delete_list(list_index):
+
+    '''Route for deleting a list.'''
+
+    todo_list.pop(list_index)
+    return redirect(url_for('index'))
+
+# Code by Shanna Owens.
 @app.route('/security-questions', methods=["GET", "POST"])
 def security_questions():
 
@@ -270,15 +382,15 @@ def security_questions():
         elif not sq3:
             error = 'Please enter an answer for Security Question 3'
         elif sq1 and sq2 and sq3:
-            with open('security.csv', mode='a', newline='') as users:
+            with open('security.csv', mode='a', newline='', encoding='utf8') as users:
                 writer = csv.writer(users)
                 hash_sq1 = generate_password_hash(sq1)
                 hash_sq2 = generate_password_hash(sq2)
                 hash_sq3 = generate_password_hash(sq3)
                 writer.writerow([username, hash_sq1, hash_sq2, hash_sq3])
             # once user input valid, append username and hashed password to database(csv)
-            with open('users.csv', mode='a', newline='') as f:
-                writer = csv.writer(f)
+            with open('users.csv', mode='a', newline='', encoding='utf8') as file:
+                writer = csv.writer(file)
                 hash_pass = generate_password_hash(password)
                 writer.writerow([username, hash_pass])
                 temp.clear()
@@ -359,9 +471,9 @@ def forgot_password():
             elif username in sq0_data:
                 for i in range(len(sq0_data)):
                     if sq0_data[i] == username:
-                        if (check_password_hash(sq1_data[i], sq1) != True 
-                        or check_password_hash(sq2_data[i], sq2) != True 
-                        or check_password_hash(sq3_data[i], sq3) != True):
+                        if (check_password_hash(sq1_data[i], sq1) is not True
+                        or check_password_hash(sq2_data[i], sq2) is not True
+                        or check_password_hash(sq3_data[i], sq3) is not True):
                             error = 'Security answers do not match.'
                         else:
                             temp.append(username)
@@ -401,7 +513,7 @@ def reset_password():
                         hash_pass = generate_password_hash(password1)
                         pswd_data[i] = hash_pass
                 # write usernames and passwords back into 'users' database(csv)
-                with open('users.csv', mode='w', newline='') as users:
+                with open('users.csv', mode='w', newline='', encoding='utf8') as users:
                     writer = csv.writer(users)
                     for item in zip(user_data, pswd_data):
                         writer.writerow(item)
@@ -439,10 +551,14 @@ def delete_account():
             # redirect user to homepage if password confirmed
             for i in range(len(user_data)):
                 # verify password input against password hash
-                if user_data[i] == username and check_password_hash(pswd_data[i], password) == False:
+                if user_data[i] == username and check_password_hash(
+                    pswd_data[i], password
+                    ) is False:
                     error = 'Wrong password.'
                 # check new password meets standard password requirements
-                elif user_data[i] == username and check_password_hash(pswd_data[i], password) == True:
+                elif user_data[i] == username and check_password_hash(
+                    pswd_data[i], password
+                    ) is True:
                     return redirect('confirm-delete')
         flash(error)
         return render_template('delete-account.html')
@@ -475,10 +591,14 @@ def confirm_delete():
             # redirect user to login if successful deletion
             for i in range(len(user_data)):
                 # verify password input against password hash
-                if user_data[i] == username and check_password_hash(pswd_data[i], password) == False:
+                if user_data[i] == username and check_password_hash(
+                    pswd_data[i], password
+                    ) is False:
                     error = 'Wrong password.'
                 # check new password meets standard password requirements
-                elif user_data[i] == username and check_password_hash(pswd_data[i], password) == True:
+                elif user_data[i] == username and check_password_hash(
+                    pswd_data[i], password
+                    ) is True:
                     kept_data = []
                     for row in data:
                         if str(row[0]) != username:
@@ -488,15 +608,15 @@ def confirm_delete():
                         if str(row[0]) != username:
                             kept_security.append(row)
                     # write usernames and passwords back into 'users' database(csv)
-                    with open('users.csv', mode='w', newline='') as f:
-                        writer = csv.writer(f)
+                    with open('users.csv', mode='w', newline='', encoding='utf8') as file:
+                        writer = csv.writer(file)
                         if kept_data:
                             for item in kept_data:
                                 writer.writerow(item)
                             # clear data
                             data.clear()
-                    with open('security.csv', mode='w', newline='') as f:
-                        writer = csv.writer(f)
+                    with open('security.csv', mode='w', newline='', encoding='utf8') as file:
+                        writer = csv.writer(file)
                         if kept_security:
                             for item in kept_security:
                                 writer.writerow(item)
@@ -517,21 +637,21 @@ def csv_data():
     # create new data list
     data = []
     # read csv file and append each line to data list
-    with open('users.csv', 'r') as f:
-        csv_reader = csv.reader(f)
+    with open('users.csv', 'r', encoding='utf8') as file:
+        csv_reader = csv.reader(file)
         for row in csv_reader:
             data.append(row)
     return data
 
 def csv_security():
-    
+
     '''Security Database'''
 
     # create new data list
     data = []
     # read csv file and append each line to data list
-    with open('security.csv', 'r') as f:
-        csv_reader = csv.reader(f)
+    with open('security.csv', 'r', encoding='utf8') as file:
+        csv_reader = csv.reader(file)
         for row in csv_reader:
             data.append(row)
     return data
@@ -572,17 +692,17 @@ def new_password_check(password, new_password):
     # verify old password entered correctly; save new password to password data list
     for i in range(len(pswd_data)):
         # check if new password input same as old password
-        if user_data[i] == username and check_password_hash(pswd_data[i], new_password) == True:
+        if user_data[i] == username and check_password_hash(pswd_data[i], new_password) is True:
             error = 'Password cannot be the same as last password.'
-        elif user_data[i] == username and check_password_hash(pswd_data[i], password) == False:
+        elif user_data[i] == username and check_password_hash(pswd_data[i], password) is False:
             error = 'Incorrect password.'
-        elif user_data[i] == username and check_password_hash(pswd_data[i], password) == True:
+        elif user_data[i] == username and check_password_hash(pswd_data[i], password) is True:
             password_check(new_password)
             if error is None:
                 hash_pass = generate_password_hash(new_password)
                 pswd_data[i] = hash_pass
                 # write usernames and passwords back into 'users' database(csv)
-                with open('users.csv', mode='w', newline='') as users:
+                with open('users.csv', mode='w', newline='', encoding='utf8') as users:
                     writer = csv.writer(users)
                     for item in zip(user_data, pswd_data):
                         writer.writerow(item)

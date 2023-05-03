@@ -1,0 +1,35 @@
+{% extends 'site-layout.html' %}
+
+{% block content %}
+<!-- start content -->
+<div class="page-content">
+    <div class="content">
+
+        <form action="{{ url_for( 'edit_task', task_id=task_id, task_name=task_name, task_description=description, task_due_date=due_date, list_id=list_id ) }}" method="POST">
+
+            <!--Task Name-->
+            <label for="task_name">Task name:</label>
+            <input type="text" id="task_name" name="task_name" value="{{task_name}}"><br>
+
+            <!--Description-->
+            <label for="description">Description:</label>
+            <textarea id="description" name="description">{{description}}</textarea><br>
+
+            <!--Due Date-->
+            <label for="due_date">Due Date:</label>
+            <input type="date" id="due_date" name="due_date" value="{{due_date}}">
+
+            <!--Task ID-->
+            <input type="hidden" id="task_id" name="task_id" value="{{task_id}}"><br>
+
+            <!--List ID-->
+            <input type="hidden" id="list_id" name="list_id" value="{{list_id}}"><br>
+
+            <!--submit-->
+            <input type="submit" class="submit" value="Update Task">
+
+        </form>
+    </div>
+</div>
+<!-- end content -->
+{% endblock %}
