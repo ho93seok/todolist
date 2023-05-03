@@ -187,9 +187,9 @@ def create_task():
 
         task = request.form['task_name']
         description = request.form['description']
-        due_date = str( request.form['due_date'] ),
-        task_id = str( randrange( 9999 ) ),
-        list_id = str( request.form['list_id'] ), # Uses Default List ID of 0 for new tasks.
+        due_date = str( request.form['due_date'] )
+        task_id = str( randrange( 9999 ) )
+        list_id = str( request.form['list_id'] ) # Uses Default List ID of 0 for new tasks.
 
         tasks = read_csv( 'tasks.csv' )
         tasks.append([task, description, due_date, task_id, list_id])
