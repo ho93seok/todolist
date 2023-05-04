@@ -41,22 +41,52 @@ def write_csv( file_name, content ):
         writer.writerows( content )
 
 # Define routes.
-@app.route('/')
+@app.route( '/', methods=['GET', 'POST'] )
 def index():
 
     '''Home Page'''
 
     # Initialize variables.
     site_title = 'Home - Group 4 To-Do List Application'
+    loggedin = False
+    username = ''
+    tasks = read_csv( 'tasks.csv' )
+    lists = read_csv( 'lists.csv' )
+
+    # Check if the user is logged in.
+    if 'username' in session:
+        loggedin = True
+        username = session['username']
+
+    #
+    if request.method == 'POST':
+
+        for task in tasks :
+
+            if task[3] == request.form['task_id'] :
+
+                if request.form['status'] == "complete" :
+
+                    # Change the task status.
+                    task[5] = "complete"
+
+                if request.form['status'] == "active" :
+
+                     # Change the task status.
+                    task[5] = "active"
+
+        write_csv( 'tasks.csv', tasks )
 
     # Render template.
     return render_template(
         'home.html',
+        loggedin = loggedin,
+        username = username,
         site_title = site_title,
         site_description = "A to-do list application by Group 4.",
         page_title = 'Home',
-        tasks = read_csv( 'tasks.csv' ),
-        lists = read_csv( 'lists.csv' ),
+        tasks = tasks,
+        lists = lists,
         todo_list = []
     )
 
@@ -92,12 +122,21 @@ def register():
                     # clear data list
                     data.clear()
 
-                    # Create default list.
-                    task_list_name = 'Default List'
-                    task_list_id = 0
+                    # Get the task lists.
                     task_lists = read_csv( 'lists.csv' )
-                    task_lists.append([task_list_name, task_list_id])
-                    write_csv( 'lists.csv', task_lists )
+
+                    # If there are no task lists...
+                    if not task_lists :
+
+                        # Initialize a Default List.
+                        task_list_name = 'Default List'
+                        task_list_id = 0
+
+                        # Add the Default List to the lists array.
+                        task_lists.append([task_list_name, task_list_id])
+
+                        # Update list file.
+                        write_csv( 'lists.csv', task_lists )
 
                     # redirect to security questions
                     return redirect(url_for('security_questions'))
@@ -105,9 +144,15 @@ def register():
         # flash any error messages at bottom of page
         flash(error)
 
-        return render_template('register.html')
+        return render_template(
+            'register.html',
+            page_title = 'Register'
+            )
 
-    return render_template('register.html')
+    return render_template(
+        'register.html',
+        page_title = 'Register'
+        )
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
@@ -131,9 +176,16 @@ def login():
                         return render_template('login.html', error=error)
             error = 'Username not found!'
             flash(error)
-            return render_template('login.html', error=error)
+            return render_template(
+                'login.html',
+                page_title = 'Log In',
+                error=error
+                )
     else:
-        return render_template('login.html')
+        return render_template(
+            'login.html',
+            page_title = 'Log In'
+        )
 
 @app.route('/admin/password-update')
 def password_update():
@@ -167,7 +219,10 @@ def admin():
 
     '''Registration Page'''
 
-    return render_template('admin.html')
+    return render_template(
+        'admin.html',
+        page_title = 'My Account',
+        )
 
 @app.route('/logout')
 def logout():
@@ -190,16 +245,18 @@ def create_task():
         due_date = str( request.form['due_date'] )
         task_id = str( randrange( 9999 ) )
         list_id = str( request.form['list_id'] ) # Uses Default List ID of 0 for new tasks.
+        status = "active"
 
         tasks = read_csv( 'tasks.csv' )
-        tasks.append([task, description, due_date, task_id, list_id])
+        tasks.append([task, description, due_date, task_id, list_id, status])
         write_csv( 'tasks.csv', tasks)
 
         return redirect(url_for('index'))
 
     return render_template(
         'create-task.html',
-        page_title = 'Add a task'
+        page_title = 'Add a task',
+        lists = read_csv( 'lists.csv' )
         )
 
 @app.route('/edit-task/<string:task_id>/<string:task_name>/<string:task_description>/<string:task_due_date>/<string:list_id>', methods=['GET', 'POST'])
@@ -212,8 +269,8 @@ def edit_task( task_id, task_name, task_description, task_due_date, list_id ):
     if request.method == 'POST':
 
         for task in tasks :
-            
-            if task[3] == request.form['task_id'] : 
+
+            if task[3] == request.form['task_id'] :
 
                 task_name = request.form['task_name']
                 description = request.form['description']
@@ -228,15 +285,16 @@ def edit_task( task_id, task_name, task_description, task_due_date, list_id ):
         write_csv( 'tasks.csv', tasks )
 
         return redirect(url_for('index'))
-    
+
     return render_template(
         'edit-task.html',
-        page_title = 'Edit Task: ' + task_name,
+        page_title = 'Edit Task',
         task_id=task_id,
         task_name = task_name,
         description =  task_description,
         due_date = task_due_date,
-        list_id =  list_id
+        list_id =  list_id,
+        lists = read_csv( 'lists.csv' )
         )
 
 # Code by Ryan Hunt.
@@ -299,7 +357,7 @@ def view_list( list_name, list_id ):
 
     return render_template(
         'view-list.html',
-        page_title = list_name,
+        page_title = 'List: ' + list_name,
         list_id = list_id,
         tasks = read_csv( 'tasks.csv' )
         )
@@ -433,8 +491,14 @@ def update_password():
         if error is not None:
             # flash error message
             flash(error)
-        return render_template('update-password.html')
-    return render_template('update-password.html')
+        return render_template(
+            'update-password.html',
+            page_title = 'Change Password'
+            )
+    return render_template(
+        'update-password.html',
+        page_title = 'Change Password'
+        )
 
 @app.route('/forgot-password', methods=["GET", "POST"])
 def forgot_password():

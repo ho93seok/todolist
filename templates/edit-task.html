@@ -22,8 +22,20 @@
             <!--Task ID-->
             <input type="hidden" id="task_id" name="task_id" value="{{task_id}}"><br>
 
-            <!--List ID-->
-            <input type="hidden" id="list_id" name="list_id" value="{{list_id}}"><br>
+            <!--List-->
+            {% if lists %}
+                <label for="list_id">List:</label>
+
+                <select name="list_id" id="list_id">
+                    {% for list in lists %}
+                        
+                        <option value="{{ list[1] }}" {% if list[1] == list_id %}selected{% endif %}>{{ list[0] }}</option>
+                        
+                    {% endfor %}
+                </select>
+                {% else %}
+                <input type="hidden" id="list_id" name="list_id" value="0">
+            {% endif %}
 
             <!--submit-->
             <input type="submit" class="submit" value="Update Task">
