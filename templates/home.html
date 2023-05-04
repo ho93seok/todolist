@@ -61,11 +61,13 @@
                     <h3>Completed Tasks</h3>
                     <ul>
                         {% for item in tasks %}
-                            <li>
-                                    <s>{{ item[0] }}</s><br>
-                                    <span style="font-size: 10pt;"><strong>List:</strong> <a href="#">Title</a></span> • 
-                                    <span style="font-size: 10pt;"><strong>Due Date:</strong> {{ item[2] }}</span>
-                            </li>
+                            {% if item[5] != "active" %}
+                                <li>
+                                        <s>{{ item[0] }}</s><br>
+                                        <span style="font-size: 10pt;"><strong>List:</strong> <a href="#">Title</a></span> • 
+                                        <span style="font-size: 10pt;"><strong>Due Date:</strong> {{ item[2] }}</span>
+                                </li>
+                            {% endif %}
                         {% endfor %}
                     </ul>
                     {% endif %}

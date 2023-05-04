@@ -17,10 +17,20 @@
 
             <!--Due Date-->
             <label for="due_date">Due Date:</label>
-            <input type="date" id="due_date" name="due_date">
+            <input type="date" id="create_task_due_date" name="due_date">
 
-            <!--List ID-->
-            <input type="hidden" id="list_id" name="list_id" value="0"><br>
+            <!--List-->
+            {% if lists %}
+                <label for="list_id">List:</label>
+
+                <select name="list_id" id="list_id">
+                    {% for list in lists %}
+                    <option value="{{ list[1] }}">{{ list[0] }}</option>
+                    {% endfor %}
+                </select>
+                {% else %}
+                <input type="hidden" id="list_id" name="list_id" value="0">
+            {% endif %}
 
             <!--Submit-->
             <input type="submit" class="submit" value="Add a task">

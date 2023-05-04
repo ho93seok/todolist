@@ -190,16 +190,18 @@ def create_task():
         due_date = str( request.form['due_date'] )
         task_id = str( randrange( 9999 ) )
         list_id = str( request.form['list_id'] ) # Uses Default List ID of 0 for new tasks.
+        status = "active"
 
         tasks = read_csv( 'tasks.csv' )
-        tasks.append([task, description, due_date, task_id, list_id])
+        tasks.append([task, description, due_date, task_id, list_id, status])
         write_csv( 'tasks.csv', tasks)
 
         return redirect(url_for('index'))
 
     return render_template(
         'create-task.html',
-        page_title = 'Add a task'
+        page_title = 'Add a task',
+        lists = read_csv( 'lists.csv' )
         )
 
 @app.route('/edit-task/<string:task_id>/<string:task_name>/<string:task_description>/<string:task_due_date>/<string:list_id>', methods=['GET', 'POST'])
@@ -236,7 +238,8 @@ def edit_task( task_id, task_name, task_description, task_due_date, list_id ):
         task_name = task_name,
         description =  task_description,
         due_date = task_due_date,
-        list_id =  list_id
+        list_id =  list_id,
+        lists = read_csv( 'lists.csv' )
         )
 
 # Code by Ryan Hunt.
