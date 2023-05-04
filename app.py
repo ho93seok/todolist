@@ -122,12 +122,21 @@ def register():
                     # clear data list
                     data.clear()
 
-                    # Create default list.
-                    task_list_name = 'Default List'
-                    task_list_id = 0
+                    # Get the task lists.
                     task_lists = read_csv( 'lists.csv' )
-                    task_lists.append([task_list_name, task_list_id])
-                    write_csv( 'lists.csv', task_lists )
+
+                    # If there are no task lists...
+                    if not task_lists :
+
+                        # Initialize a Default List.
+                        task_list_name = 'Default List'
+                        task_list_id = 0
+
+                        # Add the Default List to the lists array.
+                        task_lists.append([task_list_name, task_list_id])
+
+                        # Update list file.
+                        write_csv( 'lists.csv', task_lists )
 
                     # redirect to security questions
                     return redirect(url_for('security_questions'))
