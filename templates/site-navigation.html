@@ -1,9 +1,7 @@
 <div class="col right">
     <nav id="main-menu">
         <ul>
-        {% for link in nav %}
-            <li><a href="{{ link.url }}">{{ link.name }}</a></li>
-        {% endfor %}
+            <li><a href="/">Home</a></li>
 
         {% if session['username']%}
             <li><a href="/admin">My Account</a></li>

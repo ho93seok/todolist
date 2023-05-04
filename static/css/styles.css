@@ -8,7 +8,7 @@ Global
     line-height: 25px;
 }
 a{
-    color: #651fff;
+    color: #446bcc;
     text-decoration: none;
     transition: 70ms;
 }
@@ -38,7 +38,7 @@ Header
 ************************/
 #site-header{
     width: 100%;
-    background-color: #006b5a;
+    background-color: #00a374;
     height: auto;
     display: block;
     margin: 0;
@@ -55,7 +55,7 @@ Header
     width: 60%;
 }
 #site-header #main-menu{
-    background-color: #006b5a;
+    background-color: #00a374;
     height: auto;
     display: block;
     margin: 0;
@@ -83,7 +83,7 @@ Header
     padding: 0 15px;
 }
 #site-header #main-menu ul li a:hover{
-    color: #aa00ff;
+    color: #446bcc;
     opacity: 1 !important;
 }
 #site-header #main-menu ul li.active a{
@@ -104,12 +104,16 @@ Footer
 Page
 ************************/
 .page-header{
-    background-color: #7c968e;
+    background-color: #44CCA5;
     height: auto;
+    min-height: 109.5px;
     margin: 62px 0 0 0;
     padding: 30px 50px;
-    color: white;
+    color: #000000;
     overflow: hidden;
+}
+.page-header .columns{
+    align-items: center;
 }
 .flashes{
     background-color: #d4edda;
@@ -129,6 +133,35 @@ Page
 }
 .flashes .flashes-content p{
     text-align: center;
+}
+.create-button-wrap{
+    display: flex;
+    justify-content: right;
+    gap: 15px;
+}
+.create-button-form{
+    background-color: transparent;
+    width: auto;
+    height: auto;
+    display: inline-block;
+    margin: 30px 0;
+    padding: 0;
+    line-height: auto;
+}
+.create-button-form input[type=submit]{
+    background-color: #446bcc;
+    width: 100%;
+    margin: initial;
+    padding: 10px 20px;
+    font-weight: bold;
+    color: #ffffff;
+    border: 1px solid #446bcc;
+    transition: .2s;
+}
+.create-button-form input[type=submit]:hover{
+    cursor: pointer;
+    background-color: #ffffff;
+    color: #446bcc;
 }
 /************************
 Forms
@@ -179,32 +212,55 @@ Home
     width: 33.333%;
     flex: 1;
 }
-.action-button-wrap{
-    display: flex;
-    justify-content: right;
-    gap: 15px;
+.tasks{
+    list-style: none;
 }
-.action-button-form{
-    background-color: transparent;
-    width: auto;
-    height: auto;
-    display: inline-block;
-    margin: 30px 0;
+.tasks li{
+    position: relative;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eeeeee;
+}
+.tasks li .task-link{
+    transition: 0s;
+    padding-right: 18px;
+}
+.tasks li .task-link:hover{
+    background-image: url( /static/images/pencil-solid.svg );
+    background-repeat: no-repeat;
+    background-position: right 4px;
+    background-size: 11px;
+}
+.status-button-form{
+    background: none;
+    width: 24px;
+    height: 24px;
+    margin: 0;
     padding: 0;
-    line-height: auto;
+    position: absolute;
+    top: 3px;
+    left: -33px;
+    line-height: 15px;
 }
-.action-button-form input[type=submit]{
-    background-color: #ffffff;
-    width: 100%;
-    margin: initial;
-    padding: 10px 20px;
-    font-weight: bold;
-    color: #0d6efd;
-    border: 1px solid #0d6efd;
-    transition: .2s;
-}
-.action-button-form input[type=submit]:hover{
+.status-button-form input[type=submit]{
+    background-image: url( /static/images/square-light.svg );
+    background-repeat: no-repeat;
+    background-color: transparent;
+    margin: 0;
+    padding: 0;
+    font-size: 0px;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
     cursor: pointer;
-    background-color: #0d6efd;
-    color: #ffffff;
+}
+.status-button-form input[type=submit]:hover{
+    background-image: url( /static/images/square-check-light.svg );
+}
+.status-button-form.completed input[type=submit]:default,
+.status-button-form input[type=submit]:active{
+    background-image: url( /static/images/square-check-solid.svg );
+}
+.status-button-form.completed input[type=submit]:hover{
+    background-image: url( /static/images/square-check-light.svg );
 }
