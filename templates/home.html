@@ -7,6 +7,8 @@
 
             <p>&nbsp;</p>
 
+            {% if loggedin%}
+
             <div class="columns three-column-layout">
                 <div class="column">
 
@@ -76,6 +78,30 @@
                     {% endif %}
                 </div>
             </div>
+            {% else %}
+
+            <p style="text-align: center;">Welcome to Group 4's To-Do List application.<br>Please login below or <a href="{{ url_for('register') }}">register</a> to get started.</p>
+            
+            <!-- start content -->
+                <form action="/login" method="POST">
+                    <!--username-->
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username"><br>
+                    <!--password-->
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password"><br><br>
+                    <!--submit-->
+                    <input type="submit" class="submit" value="Log In">
+                    <!--Register-->
+                    <p>Don't have an account?
+                    <a href="{{ url_for('register') }}">Register</a>
+                    </p>
+                    <p>Having trouble signing in?
+                    <a href="forgot-password">Reset Password</a>
+                    </p>
+                </form>
+                <!-- end content -->
+                {% endif %}
     </div>
     <!-- end content -->
 {% endblock %}

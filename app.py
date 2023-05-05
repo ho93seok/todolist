@@ -355,11 +355,26 @@ def view_list( list_name, list_id ):
 
     '''Route for viewing a list.'''
 
+    # Initialize variables.
+    tasks = read_csv( 'tasks.csv' )
+    task_list_has_tasks = False
+
+    # Iterate over the tasks...
+    for task in tasks :
+
+        # If any task has an ID matching the requested list ID...
+        if task[4] == list_id :
+
+            # Update the task_list_has_tasks flag.
+            task_list_has_tasks = True
+
+    # Pass the variables to the template for rendering.
     return render_template(
         'view-list.html',
         page_title = 'List: ' + list_name,
         list_id = list_id,
-        tasks = read_csv( 'tasks.csv' )
+        tasks = tasks,
+        task_list_has_tasks = task_list_has_tasks
         )
 
 # Code by Ryan Hunt.
