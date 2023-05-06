@@ -80,6 +80,8 @@ def index():
     username = ''
     tasks = read_csv( 'tasks.csv' )
     lists = read_csv( 'lists.csv' )
+    task_index = 0
+    delete_task_index = None
 
     # Check if the user is logged in.
     if 'username' in session:
@@ -89,19 +91,38 @@ def index():
     #
     if request.method == 'POST':
 
+        # Iterate over the tasks.
         for task in tasks :
 
+            # If the current task ID matches the requested task ID...
             if task[3] == request.form['task_id'] :
 
-                if request.form['status'] == "complete" :
+                # If the user indicated the delete action...
+                if request.form['task_name'] == 'delete' :
+
+                    # Flag the task for deletion.
+                    delete_task_index = task_index
+
+                #
+                elif request.form['status'] == "complete" :
 
                     # Change the task status.
                     task[5] = "complete"
 
-                if request.form['status'] == "active" :
+                #
+                elif request.form['status'] == "active" :
 
-                     # Change the task status.
+                    # Change the task status.
                     task[5] = "active"
+
+            # Increment the delete task index count
+            task_index = task_index + 1
+
+        # If the user indicated the delete action...
+        if request.form['task_name'] == 'delete' :
+
+            # Delete the task.
+            del tasks[delete_task_index]
 
         write_csv( 'tasks.csv', tasks )
 
