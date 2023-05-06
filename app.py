@@ -645,7 +645,7 @@ def confirm_delete():
                     kept_data = []
                     for row in data:
                         if str(row[0]) != username:
-                            kept_users.append(row)
+                            kept_data.append(row)
                     kept_security = []
                     for row in security:
                         if str(row[0]) != username:
