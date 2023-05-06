@@ -40,6 +40,34 @@ def write_csv( file_name, content ):
         writer = csv.writer(file)
         writer.writerows( content )
 
+# Code by Shanna Owens.
+def csv_data():
+
+    '''User Database'''
+
+    # create new data list
+    data = []
+    # read csv file and append each line to data list
+    with open('users.csv', 'r', encoding='utf8') as file:
+        csv_reader = csv.reader(file)
+        for row in csv_reader:
+            data.append(row)
+    return data
+
+# Code by Shanna Owens.
+def csv_security():
+
+    '''Security Database'''
+
+    # create new data list
+    data = []
+    # read csv file and append each line to data list
+    with open('security.csv', 'r', encoding='utf8') as file:
+        csv_reader = csv.reader(file)
+        for row in csv_reader:
+            data.append(row)
+    return data
+
 # Define routes.
 @app.route( '/', methods=['GET', 'POST'] )
 def index():
@@ -90,14 +118,14 @@ def index():
         todo_list = []
     )
 
-# Register
+# Code by Shanna Owens.
 @app.route('/register', methods=['GET', 'POST'])
 def register():
 
     '''Registration Page'''
 
-    # if website request POST, get username/password input
     error = None
+    # if website request POST, get username/password input
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -106,8 +134,8 @@ def register():
             error = 'Please enter a username.'
         elif not password:
             error = 'Please enter a password.'
+        # loop through username column in data list
         elif username and password:
-            # loop through username column in data list
             data = csv_data()
             user_data = [user[0] for user in data]
             # flash error if username already taken; perform password check if not
@@ -118,7 +146,6 @@ def register():
                 if error is None:
                     temp.append(username)
                     temp.append(password)
-
                     # clear data list
                     data.clear()
 
@@ -141,7 +168,7 @@ def register():
                     # redirect to security questions
                     return redirect(url_for('security_questions'))
 
-        # flash any error messages at bottom of page
+        # flash any error messages
         flash(error)
 
         return render_template(
@@ -187,37 +214,10 @@ def login():
             page_title = 'Log In'
         )
 
-@app.route('/admin/password-update')
-def password_update():
-    """function returns page for user to update password (while logged in)"""
-    error = None
-    # if website request POST, get username/password input
-    # test input for correct/existing input combination saved in database(csv)
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-        new_password = request.form["new_password"]
-        # prompt user to input username and password fields
-        if not username:
-            error = 'Please enter your username.'
-        elif not password:
-            error = 'Please enter your password.'
-        elif not new_password:
-            error = 'Please enter your new password.'
-        elif username and password and new_password:
-            #error = all_checks(username, password, new_password)
-            if error is None:
-                return redirect('home')
-        if error is not None:
-            # flash any error messages at bottom of page
-            flash(error)
-        return render_template('password-update.html')
-    return render_template('password-update.html')
-
 @app.route('/admin')
 def admin():
 
-    '''Registration Page'''
+    '''Admin Page'''
 
     return render_template(
         'admin.html',
@@ -471,11 +471,12 @@ def security_questions():
                 flash('Thanks for registering!')
                 # redirect to login page
                 return redirect('login')
-        # flash any error messages at bottom of page
+        # flash any error messages
         flash(error)
         return render_template('security-questions.html')
     return render_template('security-questions.html')
 
+# Code by Shanna Owens.
 @app.route('/update-password', methods=["GET", "POST"])
 def update_password():
 
@@ -494,7 +495,7 @@ def update_password():
         new_password = request.form["new_password"]
         # prompt user to input username and password fields
         if not password:
-            error = 'Please enter existing your password.'
+            error = 'Please enter your existing password.'
         elif not new_password:
             error = 'Please enter your new password.'
         elif username and password and new_password:
@@ -515,6 +516,7 @@ def update_password():
         page_title = 'Change Password'
         )
 
+# Code by Shanna Owens.
 @app.route('/forgot-password', methods=["GET", "POST"])
 def forgot_password():
 
@@ -558,17 +560,20 @@ def forgot_password():
                             temp.append(username)
                             return redirect('reset-password')
         if error is not None:
-            # flash any error messages at bottom of page
+            # flash any error messages
             flash(error)
         return render_template('forgot-password.html')
     return render_template('forgot-password.html')
 
+# Code by Shanna Owens.
 @app.route('/reset-password', methods=["GET", "POST"])
 def reset_password():
 
     '''Reset Password'''
 
     error = None
+    # if website request POST, get password input
+    # test for user input
     if request.method == "POST":
         password1 = request.form.get("password1")
         password2 = request.form.get("password2")
@@ -577,9 +582,11 @@ def reset_password():
         elif not password2:
             error = 'Please re-enter your new password.'
         elif password1 != password2:
-            error = 'Passwords are not the same.'
+            error = 'Password mismatch.'
+        # test new password for password criteria
         else:
             password_check(password1)
+            # continue if criteria met
             if error is None:
                 username = temp[0]
                 # loop through username and password columns in data list
@@ -600,10 +607,12 @@ def reset_password():
                     data.clear()
                     flash('You have successfully changed your password!')
                     return redirect('login')
+            # flash any error messages
             flash(error)
         return render_template('reset-password.html')
     return render_template('reset-password.html')
 
+# Code by Shanna Owens.
 @app.route('/delete-account', methods=["GET", "POST"])
 def delete_account():
 
@@ -639,10 +648,12 @@ def delete_account():
                     pswd_data[i], password
                     ) is True:
                     return redirect('confirm-delete')
+        # flash any error messages
         flash(error)
         return render_template('delete-account.html')
     return render_template('delete-account.html')
 
+# Code by Shanna Owens.
 @app.route('/confirm-delete', methods=["GET", "POST"])
 def confirm_delete():
 
@@ -699,42 +710,19 @@ def confirm_delete():
                         if kept_security:
                             for item in kept_security:
                                 writer.writerow(item)
-                            # clear data
+                            # clear security
                             security.clear()
+                        # end user session
                         session.pop('username', None)
                         flash('You have successfully deleted your account!')
+                        # redirect to login
                         return redirect('login')
+        # flash any error messages
         flash(error)
         return render_template('confirm-delete.html')
     return render_template('confirm-delete.html')
 
-# CSV files
-def csv_data():
-
-    '''User Database'''
-
-    # create new data list
-    data = []
-    # read csv file and append each line to data list
-    with open('users.csv', 'r', encoding='utf8') as file:
-        csv_reader = csv.reader(file)
-        for row in csv_reader:
-            data.append(row)
-    return data
-
-def csv_security():
-
-    '''Security Database'''
-
-    # create new data list
-    data = []
-    # read csv file and append each line to data list
-    with open('security.csv', 'r', encoding='utf8') as file:
-        csv_reader = csv.reader(file)
-        for row in csv_reader:
-            data.append(row)
-    return data
-
+# Code by Shanna Owens.
 def password_check(password):
 
     '''Password Check'''
@@ -755,9 +743,9 @@ def password_check(password):
             error = 'Password must contain an uppercase letter.'
         elif not any(sc in special_char for sc in password):
             error = 'Password must contain a special character.'
-            # once user input valid, append username and hashed password to database(csv)
     return error
 
+# Code by Shanna Owens.
 def new_password_check(password, new_password):
 
     '''New Password Check'''
@@ -768,15 +756,17 @@ def new_password_check(password, new_password):
     data = csv_data()
     user_data = [x[0] for x in data]
     pswd_data = [x[1] for x in data]
-    # verify old password entered correctly; save new password to password data list
+    # verify old password entered correctly
     for i in range(len(pswd_data)):
         # check if new password input same as old password
         if user_data[i] == username and check_password_hash(pswd_data[i], new_password) is True:
             error = 'Password cannot be the same as last password.'
         elif user_data[i] == username and check_password_hash(pswd_data[i], password) is False:
             error = 'Incorrect password.'
+        # check new password criteria
         elif user_data[i] == username and check_password_hash(pswd_data[i], password) is True:
             password_check(new_password)
+            # generate new password hash
             if error is None:
                 hash_pass = generate_password_hash(new_password)
                 pswd_data[i] = hash_pass
