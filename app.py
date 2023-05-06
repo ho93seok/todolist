@@ -118,7 +118,7 @@ def index():
         todo_list = []
     )
 
-# Code by Shanna Owens & Hoseok Lee
+# Code by Shanna Owens.
 @app.route('/register', methods=['GET', 'POST'])
 def register():
 
