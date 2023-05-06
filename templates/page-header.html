@@ -10,15 +10,28 @@
 <div class="page-header">
     <div class="content">
 
-        <div class="col">
-            <h1>{{page_title}}</h1>
-        </div>
+        <div class="columns two-column-layout">
+            <div class="column">
+                <h1>{{page_title}}</h1>
+                {% if loggedin%}
+                    <p>You are logged in as <strong>{{ username }}</strong>.</p>
+                {% endif %}
+            </div>
+            <div class="column">
 
-        {% if loggedin%}
-        <div class="col">
-            <p style="text-align: right;">Welcome <strong>{{ username }}</strong>. You are logged in.</p>
+                <div class="create-button-wrap">
+                    <form action="{{ url_for('create_task') }}" id="create-button-add-task" class="create-button-form">
+                        <input type="submit" value="Add a task" />
+                    </form>
+
+                    <form action="{{ url_for('create_list') }}" id="create-button-add-list" class="create-button-form">
+                        <input type="submit" value="Add a list" />
+                    </form>
+                </div>
+            </div>
+
+            
         </div>
-        {% endif %}
     </div>
 </div>
 <!-- end page header -->

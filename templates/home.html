@@ -5,34 +5,77 @@
     <div class="page-content">
         <div class="content">
 
-            {% if session['username']%}
-                <h2>Welcome {{session['username']}}!</h2>
-            {% endif %}
+            <p>&nbsp;</p>
 
-            <form action="{{ url_for('create_task') }}" id="home-add-task">
-                <input type="submit" value="Add a task" />
-            </form>
+            <div class="columns three-column-layout">
+                <div class="column">
 
-            {% if tasks %}
-            <h3>Task List</h3>
-            <ul>
-                {% for item in tasks %}
-                    <li><a href="#">{{ item[0] }}</a></li>
-                {% endfor %}
-            </ul>
-            {% endif %}
+                    {% if lists %}
+                    <h3>Task Lists</h3>
 
-            <form method="POST" action="{{ url_for('create_list') }}"></form>
-            <h3>Projects List</h3>
-            <ol>
-                <li><a href="#">Work</a></li>
-                <li><a href="#">Education</a></li>
-                <li><a href="#">Personal</a></li>
-                {% for list in list %}
-                <li><a href="#">list.title</a></li>
+                    <ol>
+                        {% for list in lists %}
+
+                        <li><a href="{{ url_for( 'view_list', list_name=list[0], list_id=list[1] ) }}">{{ list[0] }}</a></li>
+                        
+                        {% endfor %}
+                    </ol>
+                    {% endif %}
+                </div>
+
+                <div class="column">
+
+                    {% if tasks %}
+                    <h3>Recent Tasks</h3>
+
+                    <ul class="tasks">
+                        {% for task in tasks %}
+                            {% if task[5] == "active" %}
+                                <li>
+                                    <form action="/" id="action-button-complete-task" class="status-button-form" method="POST">
+                                        <input type="submit" value="Mark Complete" />
+                                        <input type="hidden" id="task_id" name="task_id" value="{{ task[3] }}">
+                                        <input type="hidden" id="status" name="status" value="complete">
+                                    </form>
                 
-                {% endfor %}
-            </ol>
+                                    <a class="task-link" href="{{ url_for( 'edit_task', task_id=task[3], task_name=task[0], task_description=task[1], task_due_date=task[2], list_id=task[4] ) }}">
+                                        {{ task[0] }}
+                                    </a><br>
+                                    <span style="font-size: 10pt;"><strong>List:</strong> 
+                                        {% for list in lists %}
+                                            {% if task[4] == list[1]  %} 
+                                                <a href="{{ url_for( 'view_list', list_name=list[0], list_id=list[1] ) }}">{{ list[0] }}</a>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </span><br>
+                                    <span style="font-size: 10pt;"><strong>Due Date:</strong> {{ task[2] }}</span>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+
+                <div class="column">
+                    {% if tasks %}
+                    <h3>Completed Tasks</h3>
+                    <ul class="tasks">
+                        {% for task in tasks %}
+                            {% if task[5] != "active" %}
+                                <li>
+                                    <form action="/" id="action-button-activate-task" class="status-button-form completed" method="POST">
+                                        <input type="submit" value="Mark Active" />
+                                        <input type="hidden" id="task_id" name="task_id" value="{{ task[3] }}">
+                                        <input type="hidden" id="status" name="status" value="active">
+                                    </form>
+                                    <s>{{ task[0] }}</s>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
     </div>
     <!-- end content -->
 {% endblock %}
