@@ -40,6 +40,34 @@ def write_csv( file_name, content ):
         writer = csv.writer(file)
         writer.writerows( content )
 
+# Code by Shanna Owens.
+def csv_data():
+
+    '''User Database'''
+
+    # create new data list
+    data = []
+    # read csv file and append each line to data list
+    with open('users.csv', 'r', encoding='utf8') as file:
+        csv_reader = csv.reader(file)
+        for row in csv_reader:
+            data.append(row)
+    return data
+
+# Code by Shanna Owens.
+def csv_security():
+
+    '''Security Database'''
+
+    # create new data list
+    data = []
+    # read csv file and append each line to data list
+    with open('security.csv', 'r', encoding='utf8') as file:
+        csv_reader = csv.reader(file)
+        for row in csv_reader:
+            data.append(row)
+    return data
+
 # Define routes.
 @app.route( '/', methods=['GET', 'POST'] )
 def index():
@@ -90,14 +118,14 @@ def index():
         todo_list = []
     )
 
-# Register
+# Code by Shanna Owens & Hoseok Lee
 @app.route('/register', methods=['GET', 'POST'])
 def register():
 
     '''Registration Page'''
 
-    # if website request POST, get username/password input
     error = None
+    # if website request POST, get username/password input
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -106,8 +134,8 @@ def register():
             error = 'Please enter a username.'
         elif not password:
             error = 'Please enter a password.'
+        # loop through username column in data list
         elif username and password:
-            # loop through username column in data list
             data = csv_data()
             user_data = [user[0] for user in data]
             # flash error if username already taken; perform password check if not
@@ -118,7 +146,6 @@ def register():
                 if error is None:
                     temp.append(username)
                     temp.append(password)
-
                     # clear data list
                     data.clear()
 
@@ -141,7 +168,7 @@ def register():
                     # redirect to security questions
                     return redirect(url_for('security_questions'))
 
-        # flash any error messages at bottom of page
+        # flash any error messages
         flash(error)
 
         return render_template(
@@ -190,7 +217,7 @@ def login():
 @app.route('/admin')
 def admin():
 
-    '''Registration Page'''
+    '''Admin Page'''
 
     return render_template(
         'admin.html',
@@ -434,6 +461,7 @@ def security_questions():
         return render_template('security-questions.html')
     return render_template('security-questions.html')
 
+# Code by Shanna Owens.
 @app.route('/update-password', methods=["GET", "POST"])
 def update_password():
 
@@ -473,6 +501,7 @@ def update_password():
         page_title = 'Change Password'
         )
 
+# Code by Shanna Owens.
 @app.route('/forgot-password', methods=["GET", "POST"])
 def forgot_password():
 
@@ -521,6 +550,7 @@ def forgot_password():
         return render_template('forgot-password.html')
     return render_template('forgot-password.html')
 
+# Code by Shanna Owens.
 @app.route('/reset-password', methods=["GET", "POST"])
 def reset_password():
 
@@ -567,6 +597,7 @@ def reset_password():
         return render_template('reset-password.html')
     return render_template('reset-password.html')
 
+# Code by Shanna Owens.
 @app.route('/delete-account', methods=["GET", "POST"])
 def delete_account():
 
@@ -607,6 +638,7 @@ def delete_account():
         return render_template('delete-account.html')
     return render_template('delete-account.html')
 
+# Code by Shanna Owens.
 @app.route('/confirm-delete', methods=["GET", "POST"])
 def confirm_delete():
 
@@ -675,33 +707,7 @@ def confirm_delete():
         return render_template('confirm-delete.html')
     return render_template('confirm-delete.html')
 
-# CSV files
-def csv_data():
-
-    '''User Database'''
-
-    # create new data list
-    data = []
-    # read csv file and append each line to data list
-    with open('users.csv', 'r', encoding='utf8') as file:
-        csv_reader = csv.reader(file)
-        for row in csv_reader:
-            data.append(row)
-    return data
-
-def csv_security():
-
-    '''Security Database'''
-
-    # create new data list
-    data = []
-    # read csv file and append each line to data list
-    with open('security.csv', 'r', encoding='utf8') as file:
-        csv_reader = csv.reader(file)
-        for row in csv_reader:
-            data.append(row)
-    return data
-
+# Code by Shanna Owens.
 def password_check(password):
 
     '''Password Check'''
@@ -724,6 +730,7 @@ def password_check(password):
             error = 'Password must contain a special character.'
     return error
 
+# Code by Shanna Owens.
 def new_password_check(password, new_password):
 
     '''New Password Check'''
