@@ -1,0 +1,31 @@
+{% extends 'site-layout.html' %}
+
+{% block content %}
+<!-- start content -->
+<div class="page-content">
+    <div class="content">
+
+        {% if tasks %}
+
+            <h3>Tasks</h3>
+            <ul>
+
+                {% for task in tasks %}
+
+                    {% if task[4] %}
+                        {% if task[4] == list_id %}
+
+                            <li>{{ task[0] }}</li>
+
+                        {% endif %}
+                    {% endif %}
+
+                {% endfor %}
+
+            </ul>
+
+        {% endif %}
+    </div>
+</div>
+<!-- end content -->
+{% endblock %}

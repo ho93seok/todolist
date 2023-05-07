@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends 'site-layout.html' %}
 
 {% block content %}
@@ -22,4 +23,29 @@
     </div>
 </div>
 <!-- end content -->
+=======
+{% extends 'site-layout.html' %}
+
+{% block content %}
+<!-- start content -->
+<div class="page-content">
+    <div class="content">
+
+        <form action="/create-list" method="POST">
+
+            <!--List Name-->
+            <label for="list_name">List name:</label>
+            <input type="text" id="list_name" name="list_name"><br>
+
+            <!--List ID-->
+            <input type="hidden" id="list_id" name="list_id" value="{{list_id}}"><br>
+
+            <!--submit-->
+            <input type="submit" class="submit" value="Add a list">
+
+        </form>
+    </div>
+</div>
+<!-- end content -->
+>>>>>>> origin/main
 {% endblock %}
