@@ -113,7 +113,7 @@ def index():
         site_title = site_title,
         site_description = "A to-do list application by Group 4.",
         page_title = 'To-do List',
-        tasks = read_tasks()
+        tasks = read_csv( 'tasks.csv' )
     )
 
 # Code by Shanna Owens.
@@ -243,9 +243,9 @@ def create_task():
         due_date = request.form['due_date']
         #list_id = request.form['list-id']
 
-        tasks = read_tasks()
+        tasks = read_csv( 'tasks.csv' )
         tasks.append([task, description, due_date])
-        write_tasks(tasks)
+        write_csv( 'tasks.csv' , tasks)
 
         return redirect(url_for('index'))
 
@@ -331,9 +331,9 @@ def create_list():
     if request.method == 'POST':
         list = request.form['list']
 
-        lists = read_lists()
+        lists = read_csv()
         lists.append([list])
-        write_lists(lists)
+        write_csv( 'lists.csv' , lists)
 
         return redirect(url_for('index'))
     return render_template('create_list.html')

@@ -7,18 +7,6 @@
 
             <p>&nbsp;</p>
 
-<<<<<<< HEAD
-            {% if lists %}
-            <h3>Tasks</h3>
-            <ol>
-                {% for list in lists %}
-                    <li><a href="#">{{ list[0] }}</a></li>
-                    {% if tasks %}
-                    <ul>
-                        {% for task in tasks %}
-                            {% if task[3] == list[0] %}
-                                <li><a href="#">{{ task[0] }}</a></li>
-=======
             <div class="columns three-column-layout">
                 <div class="column">
 
@@ -62,24 +50,10 @@
                                     </span><br>
                                     <span style="font-size: 10pt;"><strong>Due Date:</strong> {{ task[2] }}</span>
                                 </li>
->>>>>>> origin/main
                             {% endif %}
                         {% endfor %}
                     </ul>
                     {% endif %}
-<<<<<<< HEAD
-                {% endfor %}
-            </ol>
-            {% endif %}
-
-            <form action="{{ url_for('create_list') }}" id="home-add-task">
-                <input type="submit" value="Add a List" />
-            </form>
-
-            <form action="{{ url_for('create_task') }}" id="home-add-task">
-                <input type="submit" value="Add a Task" />
-            </form>
-=======
                 </div>
 
                 <div class="column">
@@ -102,7 +76,6 @@
                     {% endif %}
                 </div>
             </div>
->>>>>>> origin/main
     </div>
     <!-- end content -->
-{% endblock %}
+{% endblock %}  
