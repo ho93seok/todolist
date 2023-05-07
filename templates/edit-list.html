@@ -1,0 +1,27 @@
+{% extends 'site-layout.html' %}
+
+{% block content %}
+<!-- start content -->
+<div class="page-content">
+    <div class="content">
+
+        <p>&nbsp;</p>
+        <h2 style="text-align: center;">Update Task Information</h2>
+
+        <form action="{{ url_for( 'edit_list', list_id=list_id, list_name=list_name ) }}" method="POST">
+
+            <!--List Name-->
+            <label for="list_name">List name:</label>
+            <input type="text" id="list_name" name="list_name" value="{{list_name}}" required><br>
+
+            <!--List ID-->
+            <input type="hidden" id="list_id" name="list_id" value="{{list_id}}"><br>
+
+            <!--submit-->
+            <input type="submit" class="submit" value="Update List">
+
+        </form>
+    </div>
+</div>
+<!-- end content -->
+{% endblock %}

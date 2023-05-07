@@ -5,9 +5,12 @@
 <div class="page-content">
     <div class="content">
 
+        <h2>{{list_name}}</h2>
         {% if tasks %}
 
             <h3>Tasks</h3>
+
+            {% if task_list_has_tasks %}
             <ul>
 
                 {% for task in tasks %}
@@ -23,6 +26,9 @@
                 {% endfor %}
 
             </ul>
+            {% else %}
+                <p>There are no tasks in this list.</p>
+            {% endif %}
 
         {% endif %}
     </div>

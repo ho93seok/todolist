@@ -4,12 +4,13 @@
 <!-- start content -->
 <div class="page-content">
     <div class="content">
-
+        <p>&nbsp;</p>
+        <h2 style="text-align: center;">Update Task Information</h2>
         <form action="{{ url_for( 'edit_task', task_id=task_id, task_name=task_name, task_description=description, task_due_date=due_date, list_id=list_id ) }}" method="POST">
 
             <!--Task Name-->
             <label for="task_name">Task name:</label>
-            <input type="text" id="task_name" name="task_name" value="{{task_name}}"><br>
+            <input type="text" id="task_name" name="task_name" value="{{task_name}}" required><br>
 
             <!--Description-->
             <label for="description">Description:</label>
