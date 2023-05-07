@@ -108,6 +108,9 @@ def index():
                         # Flag the task for deletion.
                         delete_list_index = list_index
 
+                    # Increment the delete list index count
+                    list_index = list_index + 1
+
             # If the user indicated the delete list action...
             if request.form['list_name'] == 'delete_list' :
 
@@ -146,9 +149,6 @@ def index():
 
                 # Increment the delete task index count
                 task_index = task_index + 1
-
-                # Increment the delete list index count
-                list_index = list_index + 1
 
             # If the user indicated the delete action...
             if request.form['task_name'] == 'delete' :
