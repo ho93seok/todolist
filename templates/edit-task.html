@@ -4,12 +4,8 @@
 <!-- start content -->
 <div class="page-content">
     <div class="content">
-
-        <form action="{{ url_for( 'index', task_id=task_id, task_name=task_name ) }}" method="POST">
-            <input type="submit" value="Delete" />
-            <input type="hidden" id="task_id" name="task_id" value="{{ task_id }}">
-            <input type="hidden" id="task_name" name="task_name" value="delete">
-        </form>
+        <p>&nbsp;</p>
+        <h2 style="text-align: center;">Update Task Information</h2>
         <form action="{{ url_for( 'edit_task', task_id=task_id, task_name=task_name, task_description=description, task_due_date=due_date, list_id=list_id ) }}" method="POST">
 
             <!--Task Name-->

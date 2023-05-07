@@ -163,6 +163,14 @@ Page
     background-color: #ffffff;
     color: #446bcc;
 }
+#action-button-delete-task input[type=submit]{
+    background-color: red;
+    border: 1px solid red;
+}
+#action-button-delete-task input[type=submit]:hover{
+    background-color: #ffffff;
+    color: red;
+}
 /************************
 Forms
 ************************/

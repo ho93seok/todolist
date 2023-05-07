@@ -37,6 +37,7 @@
                                     <form action="/" id="action-button-complete-task" class="status-button-form" method="POST">
                                         <input type="submit" value="Mark Complete" />
                                         <input type="hidden" id="task_id" name="task_id" value="{{ task[3] }}">
+                                        <input type="hidden" id="task_name" name="task_name" value="{{ task[0] }}">
                                         <input type="hidden" id="status" name="status" value="complete">
                                     </form>
                 
@@ -68,6 +69,7 @@
                                     <form action="/" id="action-button-activate-task" class="status-button-form completed" method="POST">
                                         <input type="submit" value="Mark Active" />
                                         <input type="hidden" id="task_id" name="task_id" value="{{ task[3] }}">
+                                        <input type="hidden" id="task_name" name="task_name" value="{{ task[0] }}">
                                         <input type="hidden" id="status" name="status" value="active">
                                     </form>
                                     <s>{{ task[0] }}</s>

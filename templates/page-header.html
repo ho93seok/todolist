@@ -20,13 +20,31 @@
             <div class="column">
 
                 <div class="create-button-wrap">
-                    <form action="{{ url_for('create_task') }}" id="create-button-add-task" class="create-button-form">
-                        <input type="submit" value="Add a task" />
-                    </form>
 
-                    <form action="{{ url_for('create_list') }}" id="create-button-add-list" class="create-button-form">
-                        <input type="submit" value="Add a list" />
-                    </form>
+                    {% if page_title == 'Edit Task'%}
+                        <form action="{{ url_for( 'index', task_id=task_id, task_name=task_name ) }}" id="action-button-delete-task" class="create-button-form" method="POST">
+                            <input type="submit" value="Delete Task" />
+                            <input type="hidden" id="task_id" name="task_id" value="{{ task_id }}">
+                            <input type="hidden" id="task_name" name="task_name" value="delete">
+                        </form>
+                    {% elif page_title == 'List'%}
+                        <form action="{{ url_for('edit_list', list_name=list_name, list_id=list_id) }}" id="create-button-add-task" class="create-button-form">
+                            <input type="submit" value="Edit List" />
+                        </form>
+                        <form action="{{ url_for( 'index', list_id=list_id, list_name=list_name ) }}" id="action-button-delete-task" class="create-button-form" method="POST">
+                            <input type="submit" value="Delete List" />
+                            <input type="hidden" id="list_id" name="list_id" value="{{ list_id }}">
+                            <input type="hidden" id="list_name" name="list_name" value="delete_list">
+                        </form>
+                    {% else %}
+                        <form action="{{ url_for('create_task') }}" id="create-button-add-task" class="create-button-form">
+                            <input type="submit" value="Add a task" />
+                        </form>
+
+                        <form action="{{ url_for('create_list') }}" id="create-button-add-list" class="create-button-form">
+                            <input type="submit" value="Add a list" />
+                        </form>
+                    {% endif %}
                 </div>
             </div>
 

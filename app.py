@@ -81,50 +81,83 @@ def index():
     tasks = read_csv( 'tasks.csv' )
     lists = read_csv( 'lists.csv' )
     task_index = 0
+    list_index = 0
     delete_task_index = None
+    delete_list_index = None
 
     # Check if the user is logged in.
     if 'username' in session:
         loggedin = True
         username = session['username']
 
-    #
+    # If the user submitted a POST request...
     if request.method == 'POST':
 
-        # Iterate over the tasks.
-        for task in tasks :
+        # If the 'list_name' key is in the request...
+        if 'list_name' in request.form :
 
-            # If the current task ID matches the requested task ID...
-            if task[3] == request.form['task_id'] :
+            # If the user indicated the delete list action...
+            if request.form['list_name'] == 'delete_list' :
 
-                # If the user indicated the delete action...
-                if request.form['task_name'] == 'delete' :
+                # Iterate over the lists.
+                for task_list in lists :
 
-                    # Flag the task for deletion.
-                    delete_task_index = task_index
+                    # If the current list ID matches the requested list ID...
+                    if task_list[1] == request.form['list_id'] :
 
-                #
-                elif request.form['status'] == "complete" :
+                        # Flag the task for deletion.
+                        delete_list_index = list_index
 
-                    # Change the task status.
-                    task[5] = "complete"
+            # If the user indicated the delete list action...
+            if request.form['list_name'] == 'delete_list' :
 
-                #
-                elif request.form['status'] == "active" :
+                # Delete the list.
+                del lists[delete_list_index]
 
-                    # Change the task status.
-                    task[5] = "active"
+            # Update the lists CSV file.
+            write_csv( 'lists.csv', lists )
 
-            # Increment the delete task index count
-            task_index = task_index + 1
+        # If the 'task_name' key is in the request...
+        elif 'task_name' in request.form :
 
-        # If the user indicated the delete action...
-        if request.form['task_name'] == 'delete' :
+            # Iterate over the tasks.
+            for task in tasks :
 
-            # Delete the task.
-            del tasks[delete_task_index]
+                # If the current task ID matches the requested task ID...
+                if task[3] == request.form['task_id'] :
 
-        write_csv( 'tasks.csv', tasks )
+                    # If the user indicated the delete task action...
+                    if request.form['task_name'] == 'delete' :
+
+                        # Flag the task for deletion.
+                        delete_task_index = task_index
+
+                    #
+                    elif request.form['status'] == "complete" :
+
+                        # Change the task status.
+                        task[5] = "complete"
+
+                    #
+                    elif request.form['status'] == "active" :
+
+                        # Change the task status.
+                        task[5] = "active"
+
+                # Increment the delete task index count
+                task_index = task_index + 1
+
+                # Increment the delete list index count
+                list_index = list_index + 1
+
+            # If the user indicated the delete action...
+            if request.form['task_name'] == 'delete' :
+
+                # Delete the task.
+                del tasks[delete_task_index]
+
+            # Update the tasks CSV file.
+            write_csv( 'tasks.csv', tasks )
 
     # Render template.
     return render_template(
@@ -135,8 +168,7 @@ def index():
         site_description = "A to-do list application by Group 4.",
         page_title = 'Home',
         tasks = tasks,
-        lists = lists,
-        todo_list = []
+        lists = lists
     )
 
 # Code by Shanna Owens.
@@ -318,36 +350,6 @@ def edit_task( task_id, task_name, task_description, task_due_date, list_id ):
         lists = read_csv( 'lists.csv' )
         )
 
-# Code by Ryan Hunt.
-@app.route('/edit_task/<int:list_index>/<int:task_index>', methods=['GET', 'POST'])
-def rh_edit_task(list_index, task_index):
-
-    '''Route for editing a task'''
-
-    rh_todo_list = rh_read_csv()
-    if request.method == 'POST':
-        new_task = {
-            'description': request.form['description'],
-            'due_date': request.form['due_date']
-        }
-        rh_todo_list[list_index]['tasks'][task_index] = new_task
-        rh_write_csv(rh_todo_list)
-        return redirect(url_for('view_list', list_index=list_index))
-    else:
-        task = rh_todo_list[list_index]['tasks'][task_index]
-        return render_template('edit_task.html', task_index=task_index, task=task)
-
-# Code by Ryan Hunt.
-@app.route('/delete_task/<int:list_index>/<int:task_index>')
-def delete_task(list_index, task_index):
-
-    '''Route for deleting a task.'''
-
-    todo_list[list_index]['tasks'].pop(task_index)
-
-    return redirect(url_for('index'))
-
-# Code by Aaron Bolton.
 @app.route('/create-list', methods=['GET', 'POST'])
 def create_list():
 
@@ -370,7 +372,6 @@ def create_list():
         list_id = randrange( 9999 )
         )
 
-# Code by Aaron Bolton.
 @app.route('/view-list/<string:list_name>/<string:list_id>', methods=['GET', 'POST'])
 def view_list( list_name, list_id ):
 
@@ -392,69 +393,43 @@ def view_list( list_name, list_id ):
     # Pass the variables to the template for rendering.
     return render_template(
         'view-list.html',
-        page_title = 'List: ' + list_name,
+        page_title = 'List',
+        list_name = list_name,
         list_id = list_id,
         tasks = tasks,
         task_list_has_tasks = task_list_has_tasks
         )
 
-# Code by Ryan Hunt.
-@app.route('/new-list', methods=['GET', 'POST'])
-def new_list():
+@app.route('/edit-list/<string:list_name>/<string:list_id>', methods=['GET', 'POST'])
+def edit_list( list_name, list_id ):
 
-    '''Route for creating a new list.'''
+    '''Route for editing a list'''
+
+    lists = read_csv( 'lists.csv' )
 
     if request.method == 'POST':
 
-        name = request.form['list_name']
-        task_list = {'name': name, 'tasks': []}
-        todo_list.append(task_list)
+        for task_list in lists :
+
+            if task_list[1] == request.form['list_id'] :
+
+                list_name = request.form['list_name']
+                list_id = request.form['list_id']
+
+                task_list[0] = list_name
+                task_list[1] = list_id
+
+        write_csv( 'lists.csv', lists )
 
         return redirect(url_for('index'))
 
-    return render_template('new-list.html')
-
-# Code by Ryan Hunt.
-def rh_read_csv():
-
-    '''Helper function to read tasks from CSV.'''
-
-    tasks = []
-    with open('todo_list.csv', 'r', encoding='utf8') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            tasks.append(row)
-    return tasks
-
-# Code by Ryan Hunt.
-def rh_write_csv(tasks):
-
-    '''Helper function to write tasks to CSV.'''
-
-    with open('tasks.csv', 'w', newline='', encoding='utf8') as file:
-        writer = csv.writer(file)
-        writer.writerows(tasks)
-
-# Code by Ryan Hunt.
-@app.route('/edit_list/<int:list_index>', methods=['GET', 'POST'])
-def edit_list(list_index):
-
-    '''Route for editing a list.'''
-
-    if request.method == 'POST':
-        name = request.form['name']
-        todo_list[list_index]['name'] = name
-        return redirect(url_for('index'))
-    return render_template('edit_list.html', list_index=list_index)
-
-# Code by Ryan Hunt.
-@app.route('/delete_list/<int:list_index>')
-def delete_list(list_index):
-
-    '''Route for deleting a list.'''
-
-    todo_list.pop(list_index)
-    return redirect(url_for('index'))
+    return render_template(
+        'edit-list.html',
+        page_title = 'Edit List',
+        list_name = list_name,
+        list_id =  list_id,
+        lists = read_csv( 'lists.csv' )
+        )
 
 # Code by Shanna Owens.
 @app.route('/security-questions', methods=["GET", "POST"])
